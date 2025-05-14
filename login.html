@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MetaBrain Login</title>
+    <link rel="stylesheet" href="login.css">
+</head>
+<body>
+    <div class="login-container">
+        <!-- Left Section -->
+        <div class="login-form-section">
+            <div class="logo-container">
+                <img src="metabrain-logo.png" alt="MetaBrain - The F5 SAP Co-Innovation" class="logo">
+            </div>
+            
+            <div class="login-form">
+                <h2>Sign In</h2>
+                <p class="subtitle">Your gateway to smarter decisions. Log in to access insights that matter.</p>
+                
+                <form>
+                    <div class="form-group">
+                        <input type="email" id="email" placeholder="Email" required>
+                    </div>
+                    
+                    <div class="form-group password-group">
+                        <input type="password" id="password" placeholder="Password" required>
+                        <button type="button" class="toggle-password">
+                            <img src="eye-icon.png" alt="Show/Hide Password">
+                        </button>
+                    </div>
+                    
+                    <div class="form-options">
+                        <label class="remember-me">
+                            <input type="checkbox" id="remember">
+                            <span>Remember me</span>
+                        </label>
+                        <a href="#" class="forgot-password">Forgot Password?</a>
+                    </div>
+                    
+                    <button type="submit" class="sign-in-btn">Sign in</button>
+                </form>
+                
+                <p class="signup-prompt">
+                    Not a member yet? <a href="signup.html" class="sign-up-link">Sign Up</a>
+                </p>
+            </div>
+        </div>
+
+        <!-- Right Section -->
+        <div class="welcome-section">
+            <div class="welcome-content">
+                <h1>Welcome to Metabrain</h1>
+                <p>Access powerful insights, track your sustainability goals, and take actionable steps toward a greener future.</p>
+                
+                <div class="analytics-preview">
+                    <!-- Floating Charts -->
+                    <img src="chart1.png" alt="Statistics" class="floating-chart top-left">
+                    <img src="chart2.png" alt="Pie Chart" class="floating-chart top-right">
+                    <img src="chart3.png" alt="Bar Chart" class="floating-chart bottom-right">
+                    
+                    <!-- Main Dashboard -->
+                    <div class="main-dashboard">
+                        <div class="dashboard-content">
+                            <div class="graph-section">
+                                <img src="line-graph.png" alt="Analytics Graph">
+                            </div>
+                            <div class="chart-section">
+                                <img src="bar-chart.png" alt="Bar Chart">
+                            </div>
+                        </div>
+                        
+                        <!-- Overlays -->
+                        <img src="robot.png" alt="AI Assistant" class="robot-assistant">
+                        <div class="progress-circle">
+                            <img src="progress.png" alt="40% Progress">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                Copyright ©2025 Metafrost.ai All Rights Reserved
+            </div>
+        </div>
+    </div>
+</body>
+</html>
