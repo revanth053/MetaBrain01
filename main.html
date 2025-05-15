@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>MetaBrain Chat</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="main.css">
+</head>
+<body>
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div>
+      <div class="logo">
+        <a href="#" id="logoHomeBtn"><img src="logo.png" alt="MetaBrain" class="logo-img"></a>
+      </div>
+      <nav class="nav-menu">
+        <a href="#" class="nav-item">
+          <span class="icon">
+            <svg width="24" height="24" fill="none" stroke="#0066B3" stroke-width="2" viewBox="0 0 24 24">
+              <rect x="3" y="11" width="18" height="2" rx="1"/>
+              <rect x="11" y="3" width="2" height="18" rx="1"/>
+            </svg>
+          </span>
+          <span>Add an Action Twin</span>
+        </a>
+        <a href="#" class="nav-item">
+          <span class="icon">
+            <svg width="24" height="24" fill="none" stroke="#0066B3" stroke-width="2" viewBox="0 0 24 24">
+              <rect x="2" y="7" width="20" height="14" rx="2"/>
+              <polyline points="16 3 12 7 8 3"/>
+            </svg>
+          </span>
+          <span>Talk with Analyst</span>
+        </a>
+        <a href="#" class="nav-item">
+          <span class="icon">
+            <svg width="24" height="24" fill="none" stroke="#0066B3" stroke-width="2" viewBox="0 0 24 24">
+              <rect x="4" y="4" width="16" height="16" rx="2"/>
+              <line x1="8" y1="2" x2="8" y2="6"/>
+              <line x1="16" y1="2" x2="16" y2="6"/>
+            </svg>
+          </span>
+          <span>Saved Reports</span>
+        </a>
+        <a href="#" class="nav-item active">
+          <span class="icon">
+            <svg width="24" height="24" fill="none" stroke="#0066B3" stroke-width="2" viewBox="0 0 24 24">
+              <rect x="3" y="7" width="18" height="13" rx="2"/>
+              <path d="M8 7V5a4 4 0 0 1 8 0v2"/>
+            </svg>
+          </span>
+          <span>Project</span>
+        </a>
+      </nav>
+    </div>
+    <div class="user-profile">
+      <div class="profile-img">JD</div>
+      <div class="profile-info">
+        <div class="profile-name">John Doe</div>
+        <div class="profile-role">Executive Leadership</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content" id="mainContent">
+    <div class="top-bar">
+      <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </button>
+      <button class="new-chat-btn">
+        <svg width="18" height="18" fill="none" stroke="white" stroke-width="2">
+          <line x1="9" y1="4" x2="9" y2="14"/>
+          <line x1="4" y1="9" x2="14" y2="9"/>
+        </svg>
+        New Chat
+      </button>
+    </div>
+    <div class="container">
+      <div class="questions-grid">
+        <div class="question-card"><p>Are there potential M&A opportunities aligned with our growth?</p></div>
+        <div class="question-card"><p>How do we compare with competitors in the motorcycle market?</p></div>
+        <div class="question-card"><p>How can we optimise our product offerings based on customer data?</p></div>
+        <div class="question-card"><p>What are the latest consumer behaviour trends in automotive?</p></div>
+        <div class="question-card"><p>How can we enhance customer engagement through personalised marketing?</p></div>
+        <div class="question-card"><p>What steps should we take to meet new environmental regulations?</p></div>
+      </div>
+      <div class="chat-section">
+        <h2>What insights you are looking for today?</h2>
+        <div class="chat-input-container">
+          <textarea class="chat-input" placeholder="Type your question here.."></textarea>
+          <div class="input-actions">
+            <div class="left-actions">
+              <button class="action-btn" title="Upload file">
+                <svg width="20" height="20" fill="none" stroke="#0066B3" stroke-width="2" viewBox="0 0 24 24">
+                  <path d="M12 16V4M8 8l4-4 4 4M4 20h16"/>
+                </svg>
+              </button>
+              <button class="action-btn" title="Voice input">
+                <svg width="20" height="20" fill="none" stroke="#0066B3" stroke-width="2" viewBox="0 0 24 24">
+                  <rect x="9" y="2" width="6" height="12" rx="3"/>
+                  <path d="M5 10v2a7 7 0 0 0 14 0v-2"/>
+                  <line x1="12" y1="22" x2="12" y2="18"/>
+                  <line x1="8" y1="22" x2="16" y2="22"/>
+                </svg>
+              </button>
+            </div>
+            <div class="right-actions">
+              <div class="plus-dropdown">
+                <button class="plus-btn" id="plusBtn"><span id="plusBtnLabel">Plus</span> ▼</button>
+                <div class="plus-menu" id="plusMenu" style="display:none;">
+                  <div class="plus-item" data-value="Plus">
+                    <svg width="20" height="20" fill="none" stroke="#0096D6" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+                    Plus
+                  </div>
+                  <div class="plus-item" data-value="Play">
+                    <svg width="20" height="20" fill="none" stroke="#E04A1F" stroke-width="2" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+                    Play
+                  </div>
+                  <div class="plus-item" data-value="Ideation">
+                    <svg width="20" height="20" fill="none" stroke="#1A8FE3" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg>
+                    Ideation
+                  </div>
+                </div>
+              </div>
+              <button class="send-btn" title="Send message">
+                <svg width="20" height="20" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24">
+                  <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <!-- Action Twin Modal -->
+  <div id="actionTwinModal" class="modal" style="display:none;">
+    <div class="modal-content">
+      <h2>Add an Action Twin</h2>
+      <p class="subtitle">Train the model to get more personalised response.</p>
+      <div class="form-grid">
+        <div class="form-group">
+          <input type="text" placeholder="Agent Name" class="form-input">
+        </div>
+        <div class="form-group">
+          <input type="text" placeholder="Description" class="form-input">
+        </div>
+        <div class="form-group">
+          <div class="select-wrapper">
+            <select class="form-input">
+              <option value="" disabled selected>Preferred Interaction Mode</option>
+              <option value="1">Mode 1</option>
+              <option value="2">Mode 2</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <input type="text" placeholder="Instructions" class="form-input">
+        </div>
+        <div class="form-group">
+          <input type="url" placeholder="Website URL" class="form-input">
+        </div>
+        <div class="form-group">
+          <div class="upload-box">
+            <div class="upload-area">
+              Drag & Drop or click to upload
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="button-group">
+        <button class="btn btn-cancel">Cancel</button>
+        <button class="btn btn-save">Save</button>
+      </div>
+    </div>
+  </div>
+  <!-- Talk with Analyst Modal -->
+  <div id="talkAnalystModal" class="modal" style="display:none;">
+    <div class="modal-content">
+      <h2>Talk with Analyst</h2>
+      <p class="subtitle">Let us know what we can do better.</p>
+      <div class="form-content">
+        <textarea placeholder="Type here.." class="text-input"></textarea>
+        <div class="upload-box">
+          <div class="upload-area">
+            Drag & Drop or click to upload
+          </div>
+        </div>
+      </div>
+      <div class="button-group">
+        <button class="btn btn-cancel">Cancel</button>
+        <button class="btn btn-submit">Submit</button>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Sidebar toggle functionality with animated icon
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const sidebar = document.getElementById('sidebar');
+    const mainContent = document.getElementById('mainContent');
+    sidebarToggle.addEventListener('click', function() {
+      sidebar.classList.toggle('closed');
+      mainContent.classList.toggle('sidebar-closed');
+      sidebarToggle.classList.toggle('open');
+    });
+    const actionTwinModal = document.getElementById('actionTwinModal');
+    const talkAnalystModal = document.getElementById('talkAnalystModal');
+
+    // Sidebar navigation
+    const navItems = document.querySelectorAll('.nav-item');
+    navItems.forEach(item => {
+      item.addEventListener('click', function(e) {
+        e.preventDefault();
+        navItems.forEach(i => i.classList.remove('active'));
+        this.classList.add('active');
+        const text = this.innerText.trim();
+        if (text === 'Add an Action Twin') {
+          actionTwinModal.style.display = 'flex';
+          talkAnalystModal.style.display = 'none';
+        } else if (text === 'Talk with Analyst') {
+          talkAnalystModal.style.display = 'flex';
+          actionTwinModal.style.display = 'none';
+        } else if (text === 'Saved Reports') {
+          actionTwinModal.style.display = 'none';
+          talkAnalystModal.style.display = 'none';
+          loadSavedReports();
+        } else if (text === 'Project') {
+          actionTwinModal.style.display = 'none';
+          talkAnalystModal.style.display = 'none';
+          loadProject();
+        } else {
+          actionTwinModal.style.display = 'none';
+          talkAnalystModal.style.display = 'none';
+          loadMainPage();
+        }
+      });
+    });
+    // Modal close logic
+    [...document.querySelectorAll('.modal')].forEach(modal => {
+      modal.addEventListener('click', function(e) {
+        if (e.target === modal) modal.style.display = 'none';
+      });
+    });
+    [...document.querySelectorAll('.btn-cancel')].forEach(btn => {
+      btn.addEventListener('click', function() {
+        btn.closest('.modal').style.display = 'none';
+      });
+    });
+    // Loaders for main content
+    function loadMainPage() {
+      document.querySelector('.container').style.display = '';
+      document.getElementById('savedReportsSection')?.remove();
+      document.getElementById('projectSection')?.remove();
+    }
+    function loadSavedReports() {
+      document.querySelector('.container').style.display = 'none';
+      document.getElementById('projectSection')?.remove();
+      if (!document.getElementById('savedReportsSection')) {
+        const section = document.createElement('section');
+        section.id = 'savedReportsSection';
+        section.innerHTML = `
+          <div class="saved-reports-header">
+            <h2>Saved Reports</h2>
+          </div>
+          <div class="saved-reports-list">
+            <div class="saved-report-card">
+              <div class="saved-report-title">TVS Motor needed to refine its..</div>
+              <div class="saved-report-date">Today</div>
+            </div>
+          </div>
+        `;
+        mainContent.appendChild(section);
+      }
+    }
+    function loadProject() {
+      document.querySelector('.container').style.display = 'none';
+      document.getElementById('savedReportsSection')?.remove();
+      if (!document.getElementById('projectSection')) {
+        const section = document.createElement('section');
+        section.id = 'projectSection';
+        section.innerHTML = `
+          <div class="project-header">
+            <h2>Project - Created by you</h2>
+            <div class="project-list">
+              <div class="project-card">
+                <div class="project-icon"><span class="project-plus">+</span></div>
+                <div class="project-title">Create a Project</div>
+                <div class="project-subtitle">Invite others to your workspace</div>
+              </div>
+              <div class="project-card">
+                <div class="project-icon"><span class="project-edit">&#9998;</span></div>
+                <div class="project-title">Project Name</div>
+                <div class="project-meta">Invited : 04 &nbsp; Created by : John Doe</div>
+              </div>
+            </div>
+            <h2>Project - you are invited to</h2>
+            <div class="project-list">
+              <div class="project-card">
+                <div class="project-icon"><span class="project-edit">&#9998;</span></div>
+                <div class="project-title">Project Name</div>
+                <div class="project-meta">Invited : 04 &nbsp; Created by : John Doe</div>
+              </div>
+            </div>
+          </div>
+        `;
+        mainContent.appendChild(section);
+      }
+    }
+
+    // Helper to show message
+    function showModalMessage(modal, msg, type) {
+      let msgDiv = modal.querySelector('.modal-message');
+      if (!msgDiv) {
+        msgDiv = document.createElement('div');
+        msgDiv.className = 'modal-message';
+        modal.querySelector('.modal-content').appendChild(msgDiv);
+      }
+      msgDiv.textContent = msg;
+      msgDiv.style.color = type === 'error' ? '#d32f2f' : '#22a06b';
+      msgDiv.style.margin = '16px 0 0 0';
+      msgDiv.style.fontWeight = '600';
+      msgDiv.style.textAlign = 'center';
+    }
+    function clearModalMessage(modal) {
+      const msgDiv = modal.querySelector('.modal-message');
+      if (msgDiv) msgDiv.remove();
+    }
+
+    // Action Twin Save
+    const actionTwinSaveBtn = actionTwinModal.querySelector('.btn-save');
+    actionTwinSaveBtn.addEventListener('click', function() {
+      clearModalMessage(actionTwinModal);
+      const inputs = actionTwinModal.querySelectorAll('.form-input');
+      let valid = true;
+      inputs.forEach(input => {
+        if (!input.value.trim()) valid = false;
+      });
+      if (!valid) {
+        showModalMessage(actionTwinModal, 'Please fill in all required fields', 'error');
+        return;
+      }
+      showModalMessage(actionTwinModal, 'Saved successfully!', 'success');
+      setTimeout(() => {
+        actionTwinModal.style.display = 'none';
+        clearModalMessage(actionTwinModal);
+        // Optionally reset form fields
+        inputs.forEach(input => input.value = '');
+      }, 1500);
+    });
+
+    // Analyst Submit
+    const analystSubmitBtn = talkAnalystModal.querySelector('.btn-submit');
+    analystSubmitBtn.addEventListener('click', function() {
+      clearModalMessage(talkAnalystModal);
+      const textarea = talkAnalystModal.querySelector('.text-input');
+      if (!textarea.value.trim()) {
+        showModalMessage(talkAnalystModal, 'Please fill in all required fields', 'error');
+        return;
+      }
+      showModalMessage(talkAnalystModal, 'Saved successfully!', 'success');
+      setTimeout(() => {
+        talkAnalystModal.style.display = 'none';
+        clearModalMessage(talkAnalystModal);
+        textarea.value = '';
+      }, 1500);
+    });
+
+    // Logo click returns to home/main page
+    const logoHomeBtn = document.getElementById('logoHomeBtn');
+    logoHomeBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+      loadMainPage();
+    });
+
+    // Plus dropdown logic
+    const plusBtn = document.getElementById('plusBtn');
+    const plusMenu = document.getElementById('plusMenu');
+    const plusBtnLabel = document.getElementById('plusBtnLabel');
+    plusBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      plusMenu.style.display = plusMenu.style.display === 'block' ? 'none' : 'block';
+    });
+    document.querySelectorAll('.plus-item').forEach(item => {
+      item.addEventListener('click', function(e) {
+        plusBtnLabel.textContent = this.getAttribute('data-value');
+        plusMenu.style.display = 'none';
+      });
+    });
+    document.addEventListener('click', function(e) {
+      if (plusMenu && !plusMenu.contains(e.target) && e.target !== plusBtn) {
+        plusMenu.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>

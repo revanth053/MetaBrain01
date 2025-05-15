@@ -85,4 +85,29 @@
         </div>
     </div>
 </body>
+<script>
+// Login form redirect to main app
+const loginForm = document.querySelector('form');
+loginForm.addEventListener('submit', function(e) {
+  e.preventDefault();
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value.trim();
+  let errorMsg = document.getElementById('loginErrorMsg');
+  if (!errorMsg) {
+    errorMsg = document.createElement('div');
+    errorMsg.id = 'loginErrorMsg';
+    errorMsg.style.color = '#d32f2f';
+    errorMsg.style.margin = '12px 0 0 0';
+    errorMsg.style.fontWeight = '600';
+    loginForm.appendChild(errorMsg);
+  }
+  if (!email || !password) {
+    errorMsg.textContent = 'Please enter both email and password.';
+    return;
+  }
+  errorMsg.textContent = '';
+  // Simulate successful login
+  window.location.href = './main.html';
+});
+</script>
 </html>
