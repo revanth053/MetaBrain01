@@ -18,7 +18,7 @@
                 <h2>Sign In</h2>
                 <p class="subtitle">Your gateway to smarter decisions. Log in to access insights that matter.</p>
                 
-                <form>
+                <form id="loginForm" onsubmit="handleLogin(event)">
                     <div class="form-group">
                         <input type="email" id="email" placeholder="Email" required>
                     </div>
@@ -35,7 +35,7 @@
                             <input type="checkbox" id="remember">
                             <span>Remember me</span>
                         </label>
-                        <a href="#" class="forgot-password">Forgot Password?</a>
+                        <a href="forgot-password.html" class="forgot-password">Forgot Password?</a>
                     </div>
                     
                     <button type="submit" class="sign-in-btn">Sign in</button>
@@ -84,30 +84,134 @@
             </div>
         </div>
     </div>
+
+    <script type="module">
+        import { getUserByEmail } from './userApi.js';
+
+        // Store user credentials in localStorage after successful signup
+        function storeUserCredentials(email, password) {
+            const credentials = {
+                email: email,
+                password: password
+            };
+            localStorage.setItem('userCredentials', JSON.stringify(credentials));
+        }
+
+        // Get stored user credentials
+        function getStoredCredentials() {
+            const credentials = localStorage.getItem('userCredentials');
+            return credentials ? JSON.parse(credentials) : null;
+        }
+
+        window.handleLogin = async function(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
+            let errorMsg = document.getElementById('loginErrorMsg');
+            
+            if (!errorMsg) {
+                errorMsg = document.createElement('div');
+                errorMsg.id = 'loginErrorMsg';
+                errorMsg.style.color = '#d32f2f';
+                errorMsg.style.margin = '12px 0 0 0';
+                errorMsg.style.fontWeight = '600';
+                document.getElementById('loginForm').appendChild(errorMsg);
+            }
+
+            if (!email || !password) {
+                errorMsg.textContent = 'Please enter both email and password.';
+                return;
+            }
+
+            try {
+                console.log('Attempting login with email:', email);
+                
+                // Get stored credentials
+                const storedCredentials = getStoredCredentials();
+                
+                // Check if credentials match
+                if (!storedCredentials || 
+                    storedCredentials.email !== email || 
+                    storedCredentials.password !== password) {
+                    errorMsg.textContent = 'Invalid email or password.';
+                    return;
+                }
+
+                // Get user by email
+                const response = await getUserByEmail(email);
+                console.log('Login response:', response);
+                
+                if (response && response.email === email) {
+                    // Store user data in session storage
+                    const userData = {
+                        id: response.id,
+                        email: response.email,
+                        org_id: response.org_id || 'default_org',
+                        role: response.role || 'user'
+                    };
+                    
+                    console.log('Storing user data:', userData);
+                    sessionStorage.setItem('user', JSON.stringify(userData));
+                    
+                    // If remember me is checked, store in localStorage
+                    if (document.getElementById('remember').checked) {
+                        localStorage.setItem('user', JSON.stringify(userData));
+                    }
+                    
+                    // Redirect to main page
+                    window.location.href = './main.html';
+                } else {
+                    console.log('Invalid response format:', response);
+                    errorMsg.textContent = 'Invalid email or password.';
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                
+                // Handle different types of errors
+                if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
+                    errorMsg.textContent = 'Unable to connect to the server. Please try again later.';
+                } else if (error.response) {
+                    // Handle API error responses
+                    switch (error.response.status) {
+                        case 404:
+                            errorMsg.textContent = 'User not found. Please check your email.';
+                            break;
+                        case 401:
+                            errorMsg.textContent = 'Invalid email or password.';
+                            break;
+                        default:
+                            errorMsg.textContent = 'An error occurred. Please try again.';
+                    }
+                } else {
+                    errorMsg.textContent = 'Invalid email or password.';
+                }
+            }
+        };
+
+        // Toggle password visibility
+        document.querySelector('.toggle-password').addEventListener('click', function() {
+            const passwordInput = document.getElementById('password');
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+        });
+
+        // Check for stored credentials
+        window.addEventListener('load', function() {
+            const storedUser = localStorage.getItem('user');
+            if (storedUser) {
+                try {
+                    const user = JSON.parse(storedUser);
+                    if (user && user.email) {
+                        document.getElementById('email').value = user.email;
+                        document.getElementById('remember').checked = true;
+                    }
+                } catch (e) {
+                    console.error('Error parsing stored user data:', e);
+                    localStorage.removeItem('user');
+                }
+            }
+        });
+    </script>
 </body>
-<script>
-// Login form redirect to main app
-const loginForm = document.querySelector('form');
-loginForm.addEventListener('submit', function(e) {
-  e.preventDefault();
-  const email = document.getElementById('email').value.trim();
-  const password = document.getElementById('password').value.trim();
-  let errorMsg = document.getElementById('loginErrorMsg');
-  if (!errorMsg) {
-    errorMsg = document.createElement('div');
-    errorMsg.id = 'loginErrorMsg';
-    errorMsg.style.color = '#d32f2f';
-    errorMsg.style.margin = '12px 0 0 0';
-    errorMsg.style.fontWeight = '600';
-    loginForm.appendChild(errorMsg);
-  }
-  if (!email || !password) {
-    errorMsg.textContent = 'Please enter both email and password.';
-    return;
-  }
-  errorMsg.textContent = '';
-  // Simulate successful login
-  window.location.href = './main.html';
-});
-</script>
 </html>
