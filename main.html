@@ -718,6 +718,39 @@
     document.addEventListener('DOMContentLoaded', loadUserChats);
 
     // Sidebar toggle functionality with animated icon
+    import { handleFileUpload } from './upload.js';
+  </script>
+  <script>
+    // Add this at the beginning of your script
+    // Update user profile from stored data
+    function updateUserProfile() {
+        const userData = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user') || '{}');
+        if (userData.email) {
+            // Update profile name - use email if name is not available
+            const displayName = userData.name || userData.email.split('@')[0];
+            document.querySelector('.profile-name').textContent = displayName;
+            
+            // Update profile image initials from email or name
+            const initials = displayName
+                .split(/[\s@]/) // Split by space or @ symbol
+                .map(n => n[0])
+                .join('')
+                .toUpperCase()
+                .substring(0, 2);
+            document.querySelector('.profile-img').textContent = initials;
+            
+            // Update role if available, otherwise use a default
+            const role = userData.role ? 
+                userData.role.charAt(0).toUpperCase() + userData.role.slice(1) :
+                'User';
+            document.querySelector('.profile-role').textContent = role;
+        }
+    }
+
+    // Call the function when page loads
+    document.addEventListener('DOMContentLoaded', updateUserProfile);
+
+    // Existing sidebar toggle functionality
     const sidebarToggle = document.getElementById('sidebarToggle');
     const sidebar = document.getElementById('sidebar');
     const mainContent = document.getElementById('mainContent');
@@ -831,18 +864,20 @@
     }
 
     // Helper to show message
-    function showModalMessage(modal, msg, type) {
-      let msgDiv = modal.querySelector('.modal-message');
-      if (!msgDiv) {
-        msgDiv = document.createElement('div');
-        msgDiv.className = 'modal-message';
-        modal.querySelector('.modal-content').appendChild(msgDiv);
-      }
-      msgDiv.textContent = msg;
-      msgDiv.style.color = type === 'error' ? '#d32f2f' : '#22a06b';
-      msgDiv.style.margin = '16px 0 0 0';
-      msgDiv.style.fontWeight = '600';
-      msgDiv.style.textAlign = 'center';
+    function showModalMessage(container, msg, type) {
+        let msgDiv = container.querySelector('.modal-message');
+        if (!msgDiv) {
+            msgDiv = document.createElement('div');
+            msgDiv.className = 'modal-message';
+            // Check if container has modal-content, if not append directly to container
+            const target = container.querySelector('.modal-content') || container;
+            target.appendChild(msgDiv);
+        }
+        msgDiv.textContent = msg;
+        msgDiv.style.color = type === 'error' ? '#d32f2f' : '#22a06b';
+        msgDiv.style.margin = '16px 0 0 0';
+        msgDiv.style.fontWeight = '600';
+        msgDiv.style.textAlign = 'center';
     }
     function clearModalMessage(modal) {
       const msgDiv = modal.querySelector('.modal-message');
@@ -1018,6 +1053,133 @@
         document.querySelector('.questions-grid').style.display = 'grid';
         document.querySelector('.chat-section').style.display = 'flex';
     });
+    // Add upload button click handler
+    const uploadBtn = document.querySelector('.action-btn[title="Upload file"]');
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.style.display = 'none';
+    document.body.appendChild(fileInput);
+
+    uploadBtn.addEventListener('click', () => {
+        fileInput.click();
+    });
+
+    // Create upload progress element
+    const uploadProgressContainer = document.createElement('div');
+    uploadProgressContainer.className = 'upload-progress-container';
+    uploadProgressContainer.innerHTML = `
+        <div class="upload-progress-info">
+            <div class="upload-progress-name"></div>
+            <div class="upload-progress-percentage"></div>
+        </div>
+        <div class="upload-progress-bar">
+            <div class="upload-progress-fill"></div>
+        </div>
+    `;
+    
+    // Get chat input container reference before using it
+    const chatInputContainer = document.querySelector('.chat-input-container');
+    chatInputContainer.appendChild(uploadProgressContainer);
+
+    // Create containers for uploads
+    const uploadedFilesContainer = document.createElement('div');
+    uploadedFilesContainer.className = 'uploaded-files-container';
+    chatInputContainer.insertBefore(uploadedFilesContainer, chatInputContainer.firstChild);
+
+    // Update file upload handler
+    fileInput.addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        try {
+            // Show upload progress UI
+            const progressContainer = document.querySelector('.upload-progress-container');
+            const progressName = progressContainer.querySelector('.upload-progress-name');
+            const progressPercentage = progressContainer.querySelector('.upload-progress-percentage');
+            const progressFill = progressContainer.querySelector('.upload-progress-fill');
+            
+            progressContainer.style.display = 'block';
+            progressName.textContent = file.name;
+            uploadBtn.style.opacity = '0.5';
+            uploadBtn.style.pointerEvents = 'none';
+
+            // Simulate upload progress
+            let progress = 0;
+            const progressInterval = setInterval(() => {
+                progress += 2;
+                if (progress <= 98) {
+                    progressFill.style.width = `${progress}%`;
+                    progressPercentage.textContent = `${progress}%`;
+                }
+            }, 100);
+
+            // Import the handleFileUpload function dynamically
+            const { handleFileUpload } = await import('./upload.js');
+            
+            // Upload the file
+            const result = await handleFileUpload(file);
+            
+            // Complete the progress
+            clearInterval(progressInterval);
+            progressFill.style.width = '100%';
+            progressPercentage.textContent = '100%';
+
+            // Create and add the file element to the container
+            const fileElement = document.createElement('div');
+            fileElement.className = 'uploaded-file';
+            fileElement.innerHTML = `
+                <div class="file-info">
+                    <svg width="16" height="16" fill="none" stroke="#0066B3" stroke-width="2" viewBox="0 0 24 24">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                    </svg>
+                    <span class="file-name">${file.name}</span>
+                    <span class="file-size">${formatFileSize(file.size)}</span>
+                </div>
+                <button class="remove-file" title="Remove file">×</button>
+            `;
+            uploadedFilesContainer.appendChild(fileElement);
+
+            // Add remove functionality
+            const removeBtn = fileElement.querySelector('.remove-file');
+            removeBtn.addEventListener('click', () => {
+                fileElement.remove();
+            });
+            
+            // Reset progress UI after delay
+            setTimeout(() => {
+                progressContainer.style.display = 'none';
+                progressFill.style.width = '0%';
+                progressPercentage.textContent = '';
+                uploadBtn.style.opacity = '1';
+                uploadBtn.style.pointerEvents = 'auto';
+            }, 2000);
+            
+        } catch (error) {
+            // Show error in progress
+            const progressContainer = document.querySelector('.upload-progress-container');
+            progressContainer.style.display = 'none';
+            
+            // Show error message
+            showModalMessage(chatInputContainer, 'Failed to upload file. Please try again.', 'error');
+            console.error('Upload error:', error);
+            
+            // Reset button state
+            uploadBtn.style.opacity = '1';
+            uploadBtn.style.pointerEvents = 'auto';
+        } finally {
+            fileInput.value = ''; // Reset file input
+        }
+    });
+
+    // Helper function to format file size
+    function formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
   </script>
 </body>
 </html>
