@@ -209,10 +209,527 @@
       </div>
     </div>
   </div>
+  <!-- Add Project Modal -->
+  <div id="addProjectModal" class="modal" style="display:none;">
+    <div class="modal-content">
+      <h2>Add a Project</h2>
+      <div class="form-grid">
+        <div class="form-group">
+          <input type="text" placeholder="Project Name" class="form-input">
+        </div>
+        <div class="form-group">
+          <input type="text" placeholder="Description" class="form-input">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="inviteEmails">Invite by email (comma separated)</label>
+        <input type="text" id="inviteEmails" placeholder="e.g., email1@example.com, email2@exa" class="form-input">
+      </div>
+      <div class="button-group">
+        <button class="btn btn-cancel" id="cancelAddProjectBtn">Cancel</button>
+        <button class="btn btn-save" id="saveProjectBtn">Save</button>
+      </div>
+    </div>
+  </div>
+  <!-- Manage Invitees Modal -->
+  <div id="manageInviteesModal" class="modal" style="display:none;">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>Manage Invitees for <span id="manageInviteesProjectName"></span></h2>
+      <div class="form-group">
+        <label for="currentInvitees">Current Invitees:</label>
+        <input type="text" id="currentInvitees" class="form-input" readonly>
+      </div>
+      <div class="form-group">
+        <label for="newInvitees">Add New Invitees (comma-separated)</label>
+        <textarea id="newInvitees" class="form-input" placeholder="email1@example.com, email2@example.com"></textarea>
+        <small>Enter email addresses separated by commas</small>
+      </div>
+      <div class="button-group">
+        <button class="btn btn-cancel" id="cancelManageInviteesBtn">Cancel</button>
+        <button class="btn btn-save" id="saveManageInviteesBtn">Save Changes</button>
+      </div>
+    </div>
+  </div>
   <script type="module">
     import { createChat, getAllChats, getChatsByUserId, deleteChat } from './chatApi.js';
     import { createResponse, getAllResponses, reactToResponse } from './responsesApi.js';
     import { createMessage, getMessagesByChatId } from './messageApi.js';
+
+    // Add this at the beginning of your script
+    const mainContent = document.getElementById('mainContent');
+    
+    // Custom notification function
+    function showNotification(message, type = 'success') {
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        notification.innerHTML = `
+            <div class="notification-content">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    ${type === 'success' ? 
+                        '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>' :
+                        '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12" y2="16"/>'
+                    }
+                </svg>
+                <span>${message}</span>
+            </div>
+        `;
+        
+        document.body.appendChild(notification);
+        
+        // Trigger animation
+        setTimeout(() => notification.classList.add('show'), 10);
+        
+        // Remove notification after 3 seconds
+        setTimeout(() => {
+            notification.classList.remove('show');
+            setTimeout(() => notification.remove(), 300);
+        }, 3000);
+    }
+
+    // Add styles for notifications
+    const style = document.createElement('style');
+    style.textContent = `
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 16px 24px;
+            border-radius: 8px;
+            background: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transform: translateX(120%);
+            transition: transform 0.3s ease-in-out;
+            z-index: 1000;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .notification-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #1A2340;
+        }
+        
+        .notification.success {
+            border-left: 4px solid #0066B3;
+        }
+        
+        .notification.success svg {
+            color: #0066B3;
+        }
+        
+        .notification.error {
+            border-left: 4px solid #E04A1F;
+        }
+        
+        .notification.error svg {
+            color: #E04A1F;
+        }
+    `;
+    document.head.appendChild(style);
+
+    // Update user profile from stored data
+    function updateUserProfile() {
+        const userData = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user') || '{}');
+        if (userData.email) {
+            // Update profile name - use email if name is not available
+            const displayName = userData.name || userData.email.split('@')[0];
+            document.querySelector('.profile-name').textContent = displayName;
+            
+            // Update profile image initials from email or name
+            const initials = displayName
+                .split(/[\s@]/) // Split by space or @ symbol
+                .map(n => n[0])
+                .join('')
+                .toUpperCase()
+                .substring(0, 2);
+            document.querySelector('.profile-img').textContent = initials;
+            
+            // Update role if available, otherwise use a default
+            const role = userData.role ? 
+                userData.role.charAt(0).toUpperCase() + userData.role.slice(1) :
+                'User';
+            document.querySelector('.profile-role').textContent = role;
+        }
+    }
+
+    // Call the function when page loads
+    document.addEventListener('DOMContentLoaded', updateUserProfile);
+
+    // Existing sidebar toggle functionality
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const sidebar = document.getElementById('sidebar');
+    const fullLogo = document.querySelector('.full-logo');
+    const closedLogo = document.querySelector('.closed-logo');
+    sidebarToggle.addEventListener('click', function() {
+      sidebar.classList.toggle('closed');
+      mainContent.classList.toggle('sidebar-closed');
+      sidebarToggle.classList.toggle('open');
+      
+      // Toggle logo visibility
+      if (sidebar.classList.contains('closed')) {
+          fullLogo.style.display = 'none';
+          closedLogo.style.display = 'block';
+      } else {
+          fullLogo.style.display = 'block';
+          closedLogo.style.display = 'none';
+      }
+    });
+    const actionTwinModal = document.getElementById('actionTwinModal');
+    const talkAnalystModal = document.getElementById('talkAnalystModal');
+    const addProjectModal = document.getElementById('addProjectModal'); // Get add project modal
+    const manageInviteesModal = document.getElementById('manageInviteesModal'); // Get manage invitees modal
+
+    // Sidebar navigation
+    const navItems = document.querySelectorAll('.nav-item');
+    navItems.forEach(item => {
+      item.addEventListener('click', function(e) {
+        e.preventDefault();
+        navItems.forEach(i => i.classList.remove('active'));
+        this.classList.add('active');
+        const text = this.innerText.trim();
+        
+        // Reset chat header and current chat ID when switching pages
+        document.getElementById('currentChatTitle').textContent = 'MetaBrain Chat';
+        currentChatId = null;
+        
+        if (text === 'Action Twin') {
+          loadActionTwinPage();
+        } else if (text === 'Talk with Analyst') {
+          talkAnalystModal.style.display = 'flex';
+          actionTwinModal.style.display = 'none';
+          addProjectModal.style.display = 'none';
+          manageInviteesModal.style.display = 'none';
+
+          // Add submit button handler for Talk with Analyst modal
+          const submitBtn = talkAnalystModal.querySelector('.btn-submit');
+          if (submitBtn) {
+            submitBtn.addEventListener('click', () => {
+              const message = talkAnalystModal.querySelector('.text-input').value.trim();
+              
+              if (!message) {
+                showNotification('Please enter your message before submitting.', 'error');
+                return;
+              }
+
+              // Get existing analyst messages from local storage
+              const existingMessages = JSON.parse(localStorage.getItem('analystMessages')) || [];
+
+              // Create new message object
+              const newMessage = {
+                id: Date.now(),
+                message,
+                timestamp: new Date().toISOString(),
+                status: 'Pending'
+              };
+
+              // Add new message and save back to local storage
+              existingMessages.push(newMessage);
+              localStorage.setItem('analystMessages', JSON.stringify(existingMessages));
+
+              // Clear form and hide modal
+              talkAnalystModal.querySelector('.text-input').value = '';
+              talkAnalystModal.style.display = 'none';
+
+              showNotification('Your message has been sent to our analyst team. We will review and respond shortly.');
+            });
+          }
+        } else if (text === 'Saved Reports') {
+          actionTwinModal.style.display = 'none';
+          talkAnalystModal.style.display = 'none';
+          addProjectModal.style.display = 'none';
+          manageInviteesModal.style.display = 'none';
+          loadSavedReports();
+        } else if (text === 'Project') {
+          actionTwinModal.style.display = 'none';
+          talkAnalystModal.style.display = 'none';
+          addProjectModal.style.display = 'none';
+          manageInviteesModal.style.display = 'none';
+          loadProject();
+        } else {
+          actionTwinModal.style.display = 'none';
+          talkAnalystModal.style.display = 'none';
+          addProjectModal.style.display = 'none';
+          manageInviteesModal.style.display = 'none';
+          loadMainPage();
+        }
+      });
+    });
+    // Modal close logic
+    [...document.querySelectorAll('.modal')].forEach(modal => {
+      modal.addEventListener('click', function(e) {
+        if (e.target === modal) modal.style.display = 'none';
+      });
+    });
+    [...document.querySelectorAll('.btn-cancel')].forEach(btn => {
+      btn.addEventListener('click', function() {
+        btn.closest('.modal').style.display = 'none';
+      });
+    });
+
+    // Loaders for main content - Moved to this script block
+    function loadMainPage() {
+      document.querySelector('.container').style.display = '';
+      document.getElementById('savedReportsSection')?.remove();
+      document.getElementById('projectSection')?.remove();
+      document.getElementById('actionTwinSection')?.remove();
+    }
+
+    function loadSavedReports() {
+      document.querySelector('.container').style.display = 'none';
+      document.getElementById('projectSection')?.remove();
+      document.getElementById('actionTwinSection')?.remove();
+      if (!document.getElementById('savedReportsSection')) {
+        const section = document.createElement('section');
+        section.id = 'savedReportsSection';
+        section.innerHTML = `
+          <div class="saved-reports-header">
+            <h2>Saved Reports</h2>
+          </div>
+          <div class="saved-reports-list">
+            <div class="saved-report-card">
+              <div class="saved-report-title">TVS Motor needed to refine its..</div>
+              <div class="saved-report-date">Today</div>
+            </div>
+          </div>
+        `;
+        mainContent.appendChild(section);
+      }
+    }
+
+    function loadProject() {
+      document.querySelector('.container').style.display = 'none';
+      document.getElementById('savedReportsSection')?.remove();
+      document.getElementById('actionTwinSection')?.remove();
+      if (!document.getElementById('projectSection')) {
+        const section = document.createElement('section');
+        section.id = 'projectSection';
+        section.innerHTML = `
+          <div class="project-page-container">
+            <div class="project-header-bar">
+              <h2>Projects - Created by you</h2>
+              <button class="create-new-project-btn">+ Create New Project</button>
+            </div>
+            <div class="project-table-container">
+              <table class="project-table">
+                <thead>
+                  <tr>
+                    <th>Project Name</th>
+                    <th>Description</th>
+                    <th>Invites</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- Project rows will be rendered here by renderProjectsTable -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        `;
+        mainContent.appendChild(section);
+
+        // Add event listeners for the Add Project modal within loadProject
+        const addProjectModal = document.getElementById('addProjectModal');
+        const createNewProjectBtn = section.querySelector('.create-new-project-btn');
+        const cancelAddProjectBtn = document.getElementById('cancelAddProjectBtn');
+        const saveProjectBtn = document.getElementById('saveProjectBtn'); // Get the save button
+        const projectNameInput = addProjectModal.querySelector('input[placeholder="Project Name"]');
+        const projectDescriptionInput = addProjectModal.querySelector('input[placeholder="Description"]');
+        const inviteEmailsInput = addProjectModal.querySelector('#inviteEmails');
+
+        // Show the modal when the "Create New Project" button is clicked
+        if (createNewProjectBtn) {
+          createNewProjectBtn.addEventListener('click', () => {
+            if (addProjectModal) {
+              addProjectModal.style.display = 'flex';
+            }
+          });
+        }
+
+        // Hide the modal when the "Cancel" button is clicked
+        if (cancelAddProjectBtn) {
+          cancelAddProjectBtn.addEventListener('click', () => {
+            if (addProjectModal) {
+              addProjectModal.style.display = 'none';
+              // Clear form fields when canceling
+              projectNameInput.value = '';
+              projectDescriptionInput.value = '';
+              inviteEmailsInput.value = '';
+            }
+          });
+        }
+
+        // Hide the modal when clicking outside the modal content
+        if (addProjectModal) {
+          addProjectModal.addEventListener('click', (e) => {
+            if (e.target === addProjectModal) {
+              addProjectModal.style.display = 'none';
+              // Clear form fields when clicking outside
+              projectNameInput.value = '';
+              projectDescriptionInput.value = '';
+              inviteEmailsInput.value = '';
+            }
+          });
+        }
+
+        // Handle Save button click
+        if (saveProjectBtn) {
+          saveProjectBtn.addEventListener('click', () => {
+            const projectName = projectNameInput.value.trim();
+            const projectDescription = projectDescriptionInput.value.trim();
+            const inviteEmails = inviteEmailsInput.value.trim();
+
+            if (!projectName) {
+              showNotification('Project Name is required.', 'error');
+              return;
+            }
+
+            const newProject = {
+              id: Date.now(),
+              name: projectName,
+              description: projectDescription,
+              invites: inviteEmails
+            };
+
+            // Get existing projects from local storage
+            const existingProjects = JSON.parse(localStorage.getItem('projects')) || [];
+
+            // Add new project and save back to local storage
+            existingProjects.push(newProject);
+            localStorage.setItem('projects', JSON.stringify(existingProjects));
+
+            // Clear form and hide modal
+            projectNameInput.value = '';
+            projectDescriptionInput.value = '';
+            inviteEmailsInput.value = '';
+            addProjectModal.style.display = 'none';
+
+            showNotification('Project created successfully!');
+            renderProjectsTable();
+          });
+        }
+
+        // Initial rendering of the table
+        renderProjectsTable();
+      }
+    }
+
+    // Function to render projects table from localStorage
+    function renderProjectsTable() {
+      const projectTableBody = document.querySelector('.project-table tbody');
+      if (!projectTableBody) return;
+
+      // Clear existing table rows
+      projectTableBody.innerHTML = '';
+
+      // Get projects from local storage
+      const projects = JSON.parse(localStorage.getItem('projects')) || [];
+
+      // Generate HTML for each project and append to the table body
+      projects.forEach(project => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${project.name}</td>
+          <td>${project.description}</td>
+          <td>${project.invites}</td>
+          <td><button class="manage-invitees-btn" data-project-id="${project.id}">Manage Invitees</button></td>
+        `;
+        projectTableBody.appendChild(row);
+      });
+
+      // Add event listeners to the Manage Invitees buttons
+      const manageInviteesButtons = projectTableBody.querySelectorAll('.manage-invitees-btn');
+      const manageInviteesModal = document.getElementById('manageInviteesModal');
+      const manageInviteesProjectName = document.getElementById('manageInviteesProjectName');
+      const currentInviteesInput = document.getElementById('currentInvitees');
+      const newInviteesTextarea = document.getElementById('newInvitees');
+      const cancelManageInviteesBtn = document.getElementById('cancelManageInviteesBtn');
+      const saveManageInviteesBtn = document.getElementById('saveManageInviteesBtn');
+
+      manageInviteesButtons.forEach(button => {
+        button.addEventListener('click', (event) => {
+          const projectId = event.target.dataset.projectId;
+          const project = projects.find(p => p.id == projectId);
+
+          if (project && manageInviteesModal) {
+            // Populate the modal with project data
+            manageInviteesProjectName.textContent = project.name;
+            currentInviteesInput.value = project.invites;
+            newInviteesTextarea.value = ''; // Clear the new invitees textarea
+            manageInviteesModal.style.display = 'flex';
+
+            // Store the project ID on the save button temporarily
+            saveManageInviteesBtn.dataset.projectId = projectId;
+          }
+        });
+      });
+
+      // Close modal when clicking the close button (X)
+      const closeButton = manageInviteesModal.querySelector('.close');
+      if (closeButton) {
+        closeButton.addEventListener('click', () => {
+          manageInviteesModal.style.display = 'none';
+        });
+      }
+
+      // Close modal when clicking outside the modal content
+      if (manageInviteesModal) {
+        manageInviteesModal.addEventListener('click', (e) => {
+          if (e.target === manageInviteesModal) {
+            manageInviteesModal.style.display = 'none';
+          }
+        });
+      }
+
+      // Handle Save Changes button click in Manage Invitees modal
+      if (saveManageInviteesBtn) {
+        saveManageInviteesBtn.addEventListener('click', (event) => {
+          const projectId = event.target.dataset.projectId;
+          const newInvitees = newInviteesTextarea.value.trim();
+
+          // Get existing projects
+          const projects = JSON.parse(localStorage.getItem('projects')) || [];
+
+          // Find the project to update
+          const projectIndex = projects.findIndex(p => p.id == projectId);
+
+          if (projectIndex !== -1) {
+            // Update the invites (add new ones to existing, avoid duplicates)
+            const existingInvites = projects[projectIndex].invites.split(',').map(email => email.trim()).filter(email => email !== '');
+            const newInvitesArray = newInvitees.split(',').map(email => email.trim()).filter(email => email !== '');
+            
+            const updatedInvites = [...new Set([...existingInvites, ...newInvitesArray])].join(', ');
+
+            projects[projectIndex].invites = updatedInvites;
+
+            // Save updated projects back to local storage
+            localStorage.setItem('projects', JSON.stringify(projects));
+
+            // Refresh the table display
+            renderProjectsTable();
+
+            // Hide the modal
+            manageInviteesModal.style.display = 'none';
+
+            // Show success message
+            const projectName = projects[projectIndex].name;
+            showNotification(`Invites have been updated for project "${projectName}". Team members will be notified.`);
+          }
+        });
+      }
+
+      // Handle Cancel button click in Manage Invitees modal
+      if (cancelManageInviteesBtn) {
+        cancelManageInviteesBtn.addEventListener('click', () => {
+          manageInviteesModal.style.display = 'none';
+        });
+      }
+    }
 
     // Chat functionality
     const chatInput = document.getElementById('chatInput');
@@ -220,8 +737,37 @@
     const uploadFileBtn = document.getElementById('uploadFileBtn');
     const voiceInputBtn = document.getElementById('voiceInputBtn');
     const chatMessages = document.getElementById('chatMessages');
+    const newChatBtn = document.querySelector('.new-chat-btn');
 
     let currentChatId = null;
+
+    // Add New Chat button handler
+    if (newChatBtn) {
+        newChatBtn.addEventListener('click', () => {
+            // Reset chat state
+            currentChatId = null;
+            chatMessages.innerHTML = '';
+            chatInput.value = '';
+            
+            // Reset chat header
+            document.getElementById('currentChatTitle').textContent = 'MetaBrain Chat';
+            
+            // Show questions grid and chat section
+            document.querySelector('.questions-grid').style.display = 'grid';
+            document.querySelector('.chat-section').style.display = 'flex';
+            
+            // Hide any other sections
+            document.getElementById('savedReportsSection')?.remove();
+            document.getElementById('projectSection')?.remove();
+            document.getElementById('actionTwinSection')?.remove();
+            
+            // Show main container
+            document.querySelector('.container').style.display = '';
+
+            // Focus on chat input
+            chatInput.focus();
+        });
+    }
 
     // Get user data from session storage
     function getUserData() {
@@ -766,50 +1312,116 @@
               list.appendChild(chatItem);
               
               // Add click handler for chat selection
-              chatContent.addEventListener('click', async () => {
-                currentChatId = chat.id;
-                document.getElementById('currentChatTitle').textContent = chat.title || 'New Chat';
-                chatMessages.innerHTML = '';
+              chatContent.addEventListener('click', async (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+
+                // Prevent multiple clicks while loading
+                if (chatContent.classList.contains('loading')) {
+                    return;
+                }
+                chatContent.classList.add('loading');
                 
                 try {
-                  const messages = await getMessagesByChatId(chat.id);
-                  if (messages && messages.length > 0) {
-                    const sortedMessages = messages.sort((a, b) => 
-                      new Date(a.createdAt) - new Date(b.createdAt)
-                    );
-                    
-                    for (const msg of sortedMessages) {
-                      displayMessage(msg, msg.sender === 'user');
-                    }
-                    
-                    chatMessages.scrollTop = chatMessages.scrollHeight;
-                  } else {
+                    // Show loading state immediately
+                    const loadingIndicator = document.createElement('div');
+                    loadingIndicator.className = 'loading-indicator';
+                    loadingIndicator.innerHTML = `
+                      <div class="loading-spinner">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0066B3" stroke-width="2">
+                          <circle cx="12" cy="12" r="10"/>
+                          <path d="M12 8v4l3 3"/>
+                        </svg>
+                      </div>
+                      <div class="loading-text">Loading chat...</div>
+                    `;
                     chatMessages.innerHTML = '';
-                    currentChatId = null;
-                  }
+                    chatMessages.appendChild(loadingIndicator);
+
+                    // Update UI state immediately
+                    currentChatId = chat.id;
+                    document.getElementById('currentChatTitle').textContent = chat.title || 'New Chat';
+                    
+                    // Hide all other sections and show chat section
+                    document.querySelector('.container').style.display = '';
+                    document.getElementById('savedReportsSection')?.remove();
+                    document.getElementById('projectSection')?.remove();
+                    document.getElementById('actionTwinSection')?.remove();
+                    
+                    // Show chat section
+                    document.querySelector('.questions-grid').style.display = 'none';
+                    document.querySelector('.chat-section').style.display = 'flex';
+
+                    // Load messages
+                    const messages = await getMessagesByChatId(chat.id);
+                    
+                    // Remove loading indicator
+                    loadingIndicator.remove();
+                    
+                    if (messages && messages.length > 0) {
+                        // Create a document fragment for better performance
+                        const fragment = document.createDocumentFragment();
+                        
+                        // Sort messages once
+                        const sortedMessages = messages.sort((a, b) => 
+                            new Date(a.createdAt) - new Date(b.createdAt)
+                        );
+                        
+                        // Process all messages at once for better performance
+                        sortedMessages.forEach(msg => {
+                            const messageElement = createMessageElement(msg, msg.sender === 'user');
+                            fragment.appendChild(messageElement);
+                        });
+                        
+                        // Append all messages at once
+                        chatMessages.appendChild(fragment);
+                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                    } else {
+                        chatMessages.innerHTML = '';
+                        currentChatId = null;
+                    }
                 } catch (error) {
-                  console.error('Error loading chat messages:', error);
-                  chatMessages.innerHTML = '';
-                  currentChatId = null;
+                    console.error('Error loading chat messages:', error);
+                    chatMessages.innerHTML = '<div class="error-message">Failed to load chat messages. Please try again.</div>';
+                    currentChatId = null;
+                } finally {
+                    // Remove loading state
+                    chatContent.classList.remove('loading');
                 }
               });
               
-              // Add delete functionality
+              // Add delete functionality with proper event handling
               deleteBtn.addEventListener('click', async (e) => {
+                e.preventDefault();
                 e.stopPropagation();
-                if (confirm('Are you sure you want to delete this chat?')) {
-                  try {
-                    await deleteChat(chat.id);
-                    chatItem.remove();
-                    if (currentChatId === chat.id) {
-                      currentChatId = null;
-                      chatMessages.innerHTML = '';
+                
+                showConfirmationDialog('Are you sure you want to delete this chat? This action cannot be undone.', async () => {
+                    try {
+                        await deleteChat(chat.id);
+                        chatItem.remove();
+                        if (currentChatId === chat.id) {
+                            currentChatId = null;
+                            chatMessages.innerHTML = '';
+                            document.getElementById('currentChatTitle').textContent = 'MetaBrain Chat';
+                            
+                            // Reset UI to default home page state
+                            document.querySelector('.container').style.display = '';
+                            document.querySelector('.questions-grid').style.display = 'grid';
+                            document.querySelector('.chat-section').style.display = 'flex';
+                            chatInput.value = '';
+                            chatInput.focus();
+                            
+                            // Hide any other sections
+                            document.getElementById('savedReportsSection')?.remove();
+                            document.getElementById('projectSection')?.remove();
+                            document.getElementById('actionTwinSection')?.remove();
+                        }
+                        showNotification('Chat has been deleted successfully.');
+                    } catch (error) {
+                        console.error('Error deleting chat:', error);
+                        showNotification('Failed to delete chat. Please try again.', 'error');
                     }
-                  } catch (error) {
-                    console.error('Error deleting chat:', error);
-                    alert('Failed to delete chat. Please try again.');
-                  }
-                }
+                });
               });
             }
             
@@ -864,508 +1476,9 @@
         });
       });
     });
-  </script>
-  <script>
-    // Add this at the beginning of your script
-    // Update user profile from stored data
-    function updateUserProfile() {
-        const userData = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user') || '{}');
-        if (userData.email) {
-            // Update profile name - use email if name is not available
-            const displayName = userData.name || userData.email.split('@')[0];
-            document.querySelector('.profile-name').textContent = displayName;
-            
-            // Update profile image initials from email or name
-            const initials = displayName
-                .split(/[\s@]/) // Split by space or @ symbol
-                .map(n => n[0])
-                .join('')
-                .toUpperCase()
-                .substring(0, 2);
-            document.querySelector('.profile-img').textContent = initials;
-            
-            // Update role if available, otherwise use a default
-            const role = userData.role ? 
-                userData.role.charAt(0).toUpperCase() + userData.role.slice(1) :
-                'User';
-            document.querySelector('.profile-role').textContent = role;
-        }
-    }
-
-    // Call the function when page loads
-    document.addEventListener('DOMContentLoaded', updateUserProfile);
-
-    // Existing sidebar toggle functionality
-    const sidebarToggle = document.getElementById('sidebarToggle');
-    const sidebar = document.getElementById('sidebar');
-    const mainContent = document.getElementById('mainContent');
-    const fullLogo = document.querySelector('.full-logo');
-    const closedLogo = document.querySelector('.closed-logo');
-    sidebarToggle.addEventListener('click', function() {
-      sidebar.classList.toggle('closed');
-      mainContent.classList.toggle('sidebar-closed');
-      sidebarToggle.classList.toggle('open');
-      
-      // Toggle logo visibility
-      if (sidebar.classList.contains('closed')) {
-          fullLogo.style.display = 'none';
-          closedLogo.style.display = 'block';
-      } else {
-          fullLogo.style.display = 'block';
-          closedLogo.style.display = 'none';
-      }
-    });
-    const actionTwinModal = document.getElementById('actionTwinModal');
-    const talkAnalystModal = document.getElementById('talkAnalystModal');
-
-    // Sidebar navigation
-    const navItems = document.querySelectorAll('.nav-item');
-    navItems.forEach(item => {
-      item.addEventListener('click', function(e) {
-        e.preventDefault();
-        navItems.forEach(i => i.classList.remove('active'));
-        this.classList.add('active');
-        const text = this.innerText.trim();
-        if (text === 'Action Twin') {
-          loadActionTwinPage();
-        } else if (text === 'Talk with Analyst') {
-          talkAnalystModal.style.display = 'flex';
-          actionTwinModal.style.display = 'none';
-        } else if (text === 'Saved Reports') {
-          actionTwinModal.style.display = 'none';
-          talkAnalystModal.style.display = 'none';
-          loadSavedReports();
-        } else if (text === 'Project') {
-          actionTwinModal.style.display = 'none';
-          talkAnalystModal.style.display = 'none';
-          loadProject();
-        } else {
-          actionTwinModal.style.display = 'none';
-          talkAnalystModal.style.display = 'none';
-          loadMainPage();
-        }
-      });
-    });
-    // Modal close logic
-    [...document.querySelectorAll('.modal')].forEach(modal => {
-      modal.addEventListener('click', function(e) {
-        if (e.target === modal) modal.style.display = 'none';
-      });
-    });
-    [...document.querySelectorAll('.btn-cancel')].forEach(btn => {
-      btn.addEventListener('click', function() {
-        btn.closest('.modal').style.display = 'none';
-      });
-    });
-    // Loaders for main content
-    function loadMainPage() {
-      document.querySelector('.container').style.display = '';
-      document.getElementById('savedReportsSection')?.remove();
-      document.getElementById('projectSection')?.remove();
-      document.getElementById('actionTwinSection')?.remove();
-    }
-    function loadSavedReports() {
-      document.querySelector('.container').style.display = 'none';
-      document.getElementById('projectSection')?.remove();
-      document.getElementById('actionTwinSection')?.remove();
-      if (!document.getElementById('savedReportsSection')) {
-        const section = document.createElement('section');
-        section.id = 'savedReportsSection';
-        section.innerHTML = `
-          <div class="saved-reports-header">
-            <h2>Saved Reports</h2>
-          </div>
-          <div class="saved-reports-list">
-            <div class="saved-report-card">
-              <div class="saved-report-title">TVS Motor needed to refine its..</div>
-              <div class="saved-report-date">Today</div>
-            </div>
-          </div>
-        `;
-        mainContent.appendChild(section);
-      }
-    }
-    function loadProject() {
-      document.querySelector('.container').style.display = 'none';
-      document.getElementById('savedReportsSection')?.remove();
-      document.getElementById('actionTwinSection')?.remove();
-      if (!document.getElementById('projectSection')) {
-        const section = document.createElement('section');
-        section.id = 'projectSection';
-        section.innerHTML = `
-          <div class="project-header">
-            <h2>Project - Created by you</h2>
-            <div class="project-list">
-              <div class="project-card">
-                <div class="project-icon"><span class="project-plus">+</span></div>
-                <div class="project-title">Create a Project</div>
-                <div class="project-subtitle">Invite others to your workspace</div>
-              </div>
-              <div class="project-card">
-                <div class="project-icon"><span class="project-edit">&#9998;</span></div>
-                <div class="project-title">Project Name</div>
-                <div class="project-meta">Invited : 04 &nbsp; Created by : John Doe</div>
-              </div>
-            </div>
-            <h2>Project - you are invited to</h2>
-            <div class="project-list">
-              <div class="project-card">
-                <div class="project-icon"><span class="project-edit">&#9998;</span></div>
-                <div class="project-title">Project Name</div>
-                <div class="project-meta">Invited : 04 &nbsp; Created by : John Doe</div>
-              </div>
-            </div>
-          </div>
-        `;
-        mainContent.appendChild(section);
-      }
-    }
-
-    // Helper to show message
-    function showModalMessage(container, msg, type) {
-        let msgDiv = container.querySelector('.modal-message');
-        if (!msgDiv) {
-            msgDiv = document.createElement('div');
-            msgDiv.className = 'modal-message';
-            // Check if container has modal-content, if not append directly to container
-            const target = container.querySelector('.modal-content') || container;
-            target.appendChild(msgDiv);
-        }
-        msgDiv.textContent = msg;
-        msgDiv.style.color = type === 'error' ? '#d32f2f' : '#22a06b';
-        msgDiv.style.margin = '16px 0 0 0';
-        msgDiv.style.fontWeight = '600';
-        msgDiv.style.textAlign = 'center';
-    }
-    function clearModalMessage(modal) {
-      const msgDiv = modal.querySelector('.modal-message');
-      if (msgDiv) msgDiv.remove();
-    }
-
-    // Action Twin Save
-    const actionTwinSaveBtn = actionTwinModal.querySelector('.btn-save');
-    actionTwinSaveBtn.addEventListener('click', function() {
-      clearModalMessage(actionTwinModal);
-      const inputs = actionTwinModal.querySelectorAll('.form-input');
-      let valid = true;
-      inputs.forEach(input => {
-        if (!input.value.trim()) valid = false;
-      });
-      if (!valid) {
-        showModalMessage(actionTwinModal, 'Please fill in all required fields', 'error');
-        return;
-      }
-
-      // Capture form data
-      const twinData = {
-        id: Date.now(), // Simple unique ID for now
-        agentName: inputs[0].value.trim(),
-        description: inputs[1].value.trim(),
-        interactionMode: inputs[2].value,
-        instructions: inputs[3].value.trim(),
-        website: inputs[4].value.trim(),
-        files: 'None' // Placeholder for files
-      };
-
-      // Get existing twins from local storage or initialize empty array
-      const existingTwins = JSON.parse(localStorage.getItem('actionTwins')) || [];
-
-      // Add new twin to array
-      existingTwins.push(twinData);
-
-      // Save updated array back to local storage
-      localStorage.setItem('actionTwins', JSON.stringify(existingTwins));
-
-      // Show success message and close modal
-      showModalMessage(actionTwinModal, 'Action Twin saved successfully!', 'success');
-      setTimeout(() => {
-        actionTwinModal.style.display = 'none';
-        clearModalMessage(actionTwinModal);
-        // Reset form fields
-        inputs.forEach(input => input.value = '');
-        // Refresh the list display
-        renderActionTwins();
-      }, 800);
-    });
-
-    // Analyst Submit
-    const analystSubmitBtn = talkAnalystModal.querySelector('.btn-submit');
-    analystSubmitBtn.addEventListener('click', function() {
-      clearModalMessage(talkAnalystModal);
-      const textarea = talkAnalystModal.querySelector('.text-input');
-      if (!textarea.value.trim()) {
-        showModalMessage(talkAnalystModal, 'Please fill in all required fields', 'error');
-        return;
-      }
-      showModalMessage(talkAnalystModal, 'Saved successfully!', 'success');
-      setTimeout(() => {
-        talkAnalystModal.style.display = 'none';
-        clearModalMessage(talkAnalystModal);
-        textarea.value = '';
-      }, 1500);
-    });
-
-    // Logo click returns to home/main page
-    const logoHomeBtn = document.getElementById('logoHomeBtn');
-    logoHomeBtn.addEventListener('click', function(e) {
-      e.preventDefault();
-      document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-      loadMainPage();
-    });
-
-    // Plus dropdown logic
-    const plusBtn = document.getElementById('plusBtn');
-    const plusMenu = document.getElementById('plusMenu');
-    const plusBtnLabel = document.getElementById('plusBtnLabel');
-    plusBtn.addEventListener('click', function(e) {
-      e.stopPropagation();
-      plusMenu.style.display = plusMenu.style.display === 'block' ? 'none' : 'block';
-    });
-    document.querySelectorAll('.plus-item').forEach(item => {
-      item.addEventListener('click', function(e) {
-        plusBtnLabel.textContent = this.getAttribute('data-value');
-        plusMenu.style.display = 'none';
-      });
-    });
-    document.addEventListener('click', function(e) {
-      if (plusMenu && !plusMenu.contains(e.target) && e.target !== plusBtn) {
-        plusMenu.style.display = 'none';
-      }
-    });
-
-    // Function to poll for bot response
-    async function pollForBotResponse(chatId, userMessageTimestamp, placeholderElement) {
-        const pollInterval = 2000; // Poll every 2 seconds
-        const maxAttempts = 30; // Poll for max 60 seconds (30 attempts * 2 seconds)
-        let attempts = 0;
-        let retryCount = 0;
-        const maxRetries = 3;
-
-        const pollingIntervalId = setInterval(async () => {
-            attempts++;
-            console.log(`Polling for bot response, attempt ${attempts}...`);
-
-            try {
-                const messages = await getMessagesByChatId(chatId);
-
-                if (messages && messages.length > 0) {
-                    // Find the latest bot message that is newer than the user's message
-                    const latestBotMessage = messages
-                        .filter(msg => msg.sender === 'bot')
-                        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-                        .find(msg => new Date(msg.createdAt).getTime() > userMessageTimestamp);
-
-                    if (latestBotMessage) {
-                        console.log('Bot response received:', latestBotMessage);
-
-                        // Remove the placeholder message
-                        if (placeholderElement && placeholderElement.parentNode) {
-                            placeholderElement.parentNode.removeChild(placeholderElement);
-                        }
-
-                        // Check if the response is an error message
-                        if (latestBotMessage.text.includes("I'm sorry, I'm having trouble processing your request")) {
-                            if (retryCount < maxRetries) {
-                                retryCount++;
-                                console.log(`Retrying request (${retryCount}/${maxRetries})...`);
-                                // Update placeholder to show retry status
-                                if (placeholderElement) {
-                                    placeholderElement.textContent = `Retrying request (${retryCount}/${maxRetries})...`;
-                                }
-                                return; // Continue polling
-                            }
-                        }
-
-                        // Fetch responses to find the one linked to this message/chat for reactions
-                        const responses = await getAllResponses();
-                        const linkedResponse = responses.find(res => res.chat_id === latestBotMessage.chat_id);
-
-                        // Display the actual bot message with potential reactions
-                        const botMessageData = { ...latestBotMessage, response_id: linkedResponse ? linkedResponse.id : null };
-                        displayMessage(botMessageData, false);
-
-                        // Stop polling
-                        clearInterval(pollingIntervalId);
-                        return;
-                    }
-                }
-
-                if (attempts >= maxAttempts) {
-                    console.warn('Max polling attempts reached. Bot response not received.');
-                    if (placeholderElement) {
-                        if (retryCount < maxRetries) {
-                            retryCount++;
-                            console.log(`Retrying entire request (${retryCount}/${maxRetries})...`);
-                            placeholderElement.textContent = `Retrying request (${retryCount}/${maxRetries})...`;
-                            // Reset attempts counter for the retry
-                            attempts = 0;
-                            return;
-                        } else {
-                            placeholderElement.textContent = 'Bot response timed out. Please try again later.';
-                            placeholderElement.style.color = 'red';
-                        } 
-                    }
-                    clearInterval(pollingIntervalId);
-                }
-
-            } catch (error) {
-                console.error('Error during polling:', error);
-                if (placeholderElement) {
-                    if (retryCount < maxRetries) {
-                        retryCount++;
-                        console.log(`Retrying after error (${retryCount}/${maxRetries})...`);
-                        placeholderElement.textContent = `Retrying request (${retryCount}/${maxRetries})...`;
-                    } else {
-                        placeholderElement.textContent = 'Bot response timed out. Please try again later.';
-                        placeholderElement.style.color = 'red';
-                    } 
-                }
-            }
-        });
-    }
-
-    // Add event listener for new chat button
-    document.querySelector('.new-chat-btn').addEventListener('click', () => {
-        // Clear current chat
-        currentChatId = null;
-        chatMessages.innerHTML = '';
-        document.getElementById('currentChatTitle').textContent = 'MetaBrain Chat';
-        
-        // Keep both questions grid and chat section visible
-        document.querySelector('.questions-grid').style.display = 'grid';
-        document.querySelector('.chat-section').style.display = 'flex';
-        document.getElementById('actionTwinSection')?.remove(); // Hide Action Twin section
-        document.querySelector('.container').style.display = ''; // Show main container
-    });
-    // Add upload button click handler
-    const uploadBtn = document.querySelector('.action-btn[title="Upload file"]');
-    const fileInput = document.createElement('input');
-    fileInput.type = 'file';
-    fileInput.style.display = 'none';
-    document.body.appendChild(fileInput);
-
-    uploadBtn.addEventListener('click', () => {
-        fileInput.click();
-    });
-
-    // Create upload progress element
-    const uploadProgressContainer = document.createElement('div');
-    uploadProgressContainer.className = 'upload-progress-container';
-    uploadProgressContainer.innerHTML = `
-        <div class="upload-progress-info">
-            <div class="upload-progress-name"></div>
-            <div class="upload-progress-percentage"></div>
-        </div>
-        <div class="upload-progress-bar">
-            <div class="upload-progress-fill"></div>
-        </div>
-    `;
-    
-    // Get chat input container reference before using it
-    const chatInputContainer = document.querySelector('.chat-input-container');
-    chatInputContainer.appendChild(uploadProgressContainer);
-
-    // Create containers for uploads
-    const uploadedFilesContainer = document.createElement('div');
-    uploadedFilesContainer.className = 'uploaded-files-container';
-    chatInputContainer.insertBefore(uploadedFilesContainer, chatInputContainer.firstChild);
-
-    // Update file upload handler
-    fileInput.addEventListener('change', async (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-
-        try {
-            // Show upload progress UI
-            const progressContainer = document.querySelector('.upload-progress-container');
-            const progressName = progressContainer.querySelector('.upload-progress-name');
-            const progressPercentage = progressContainer.querySelector('.upload-progress-percentage');
-            const progressFill = progressContainer.querySelector('.upload-progress-fill');
-            
-            progressContainer.style.display = 'block';
-            progressName.textContent = file.name;
-            uploadBtn.style.opacity = '0.5';
-            uploadBtn.style.pointerEvents = 'none';
-
-            // Simulate upload progress
-            let progress = 0;
-            const progressInterval = setInterval(() => {
-                progress += 2;
-                if (progress <= 98) {
-                    progressFill.style.width = `${progress}%`;
-                    progressPercentage.textContent = `${progress}%`;
-                }
-            }, 100);
-
-            // Import the handleFileUpload function dynamically
-            const { handleFileUpload } = await import('./upload.js');
-            
-            // Upload the file
-            const result = await handleFileUpload(file);
-            
-            // Complete the progress
-            clearInterval(progressInterval);
-            progressFill.style.width = '100%';
-            progressPercentage.textContent = '100%';
-
-            // Create and add the file element to the container
-            const fileElement = document.createElement('div');
-            fileElement.className = 'uploaded-file';
-            fileElement.innerHTML = `
-                <div class="file-info">
-                    <svg width="16" height="16" fill="none" stroke="#0066B3" stroke-width="2" viewBox="0 0 24 24">
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                        <polyline points="14 2 14 8 20 8"/>
-                    </svg>
-                    <span class="file-name">${file.name}</span>
-                    <span class="file-size">${formatFileSize(file.size)}</span>
-                </div>
-                <button class="remove-file" title="Remove file">×</button>
-            `;
-            uploadedFilesContainer.appendChild(fileElement);
-
-            // Add remove functionality
-            const removeBtn = fileElement.querySelector('.remove-file');
-            removeBtn.addEventListener('click', () => {
-                fileElement.remove();
-            });
-            
-            // Reset progress UI after delay
-            setTimeout(() => {
-                progressContainer.style.display = 'none';
-                progressFill.style.width = '0%';
-                progressPercentage.textContent = '';
-                uploadBtn.style.opacity = '1';
-                uploadBtn.style.pointerEvents = 'auto';
-            }, 2000);
-            
-        } catch (error) {
-            // Show error in progress
-            const progressContainer = document.querySelector('.upload-progress-container');
-            progressContainer.style.display = 'none';
-            
-            // Show error message
-            showModalMessage(chatInputContainer, 'Failed to upload file. Please try again.', 'error');
-            console.error('Upload error:', error);
-            
-            // Reset button state
-            uploadBtn.style.opacity = '1';
-            uploadBtn.style.pointerEvents = 'auto';
-        } finally {
-            fileInput.value = ''; // Reset file input
-        }
-    });
-
-    // Helper function to format file size
-    function formatFileSize(bytes) {
-        if (bytes === 0) return '0 Bytes';
-        const k = 1024;
-        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-        const i = Math.floor(Math.log(bytes) / Math.log(k));
-        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-    }
 
     function loadActionTwinPage() {
+        console.log('loadActionTwinPage called');
         document.querySelector('.container').style.display = 'none';
         document.getElementById('savedReportsSection')?.remove();
         document.getElementById('projectSection')?.remove();
@@ -1388,7 +1501,7 @@
                         <div class="list-header-item">Agent Name</div>
                         <div class="list-header-item">Description</div>
                         <div class="list-header-item">Interaction Mode</div>
-                        <div class="list-header-item">Instructions</div>
+                        <div class="list-item-cell">Instructions</div>
                         <div class="list-header-item">Website</div>
                         <div class="list-header-item">Files</div>
                     </div>
@@ -1396,12 +1509,51 @@
                 </div>
             `;
             mainContent.appendChild(section);
+            console.log('actionTwinSection created and appended', section);
 
             // Add click handler for the Add Action Twin button
             const addTwinBtn = document.getElementById('addTwinBtn');
             addTwinBtn.addEventListener('click', () => {
                 actionTwinModal.style.display = 'flex';
             });
+
+            // Add save button handler for Action Twin modal
+            const saveTwinBtn = actionTwinModal.querySelector('.btn-save');
+            if (saveTwinBtn) {
+                saveTwinBtn.addEventListener('click', () => {
+                    const agentName = actionTwinModal.querySelector('input[placeholder="Agent Name"]').value.trim();
+                    const description = actionTwinModal.querySelector('input[placeholder="Description"]').value.trim();
+                    const interactionMode = actionTwinModal.querySelector('select').value;
+                    const instructions = actionTwinModal.querySelector('input[placeholder="Instructions"]').value.trim();
+                    const website = actionTwinModal.querySelector('input[placeholder="Website URL"]').value.trim();
+
+                    if (!agentName) {
+                        showNotification('Agent Name is required.', 'error');
+                        return;
+                    }
+
+                    const newTwin = {
+                        id: Date.now(),
+                        agentName,
+                        description,
+                        interactionMode,
+                        instructions,
+                        website,
+                        files: 'No files uploaded'
+                    };
+
+                    const existingTwins = JSON.parse(localStorage.getItem('actionTwins')) || [];
+                    existingTwins.push(newTwin);
+                    localStorage.setItem('actionTwins', JSON.stringify(existingTwins));
+
+                    actionTwinModal.querySelectorAll('input').forEach(input => input.value = '');
+                    actionTwinModal.querySelector('select').value = '';
+                    actionTwinModal.style.display = 'none';
+
+                    showNotification('Action Twin created successfully!');
+                    renderActionTwins();
+                });
+            }
         }
         
         // Render existing action twins when the page is loaded
@@ -1411,7 +1563,7 @@
     // Function to render action twins from localStorage
     function renderActionTwins() {
         const actionTwinList = document.querySelector('.action-twin-list');
-        if (!actionTwinList) return; // Ensure the list element exists
+        if (!actionTwinList) return;
 
         // Clear existing list items (keep header)
         const existingItems = actionTwinList.querySelectorAll('.action-twin-list-item');
@@ -1422,7 +1574,7 @@
         storedTwins.forEach(twin => {
             const listItem = document.createElement('div');
             listItem.className = 'action-twin-list-item';
-            listItem.dataset.id = twin.id; // Store twin ID
+            listItem.dataset.id = twin.id;
 
             listItem.innerHTML = `
                 <div class="list-item-cell">${twin.agentName}</div>
@@ -1447,6 +1599,109 @@
             `;
 
             actionTwinList.appendChild(listItem);
+        });
+    }
+
+    // Add custom confirmation dialog function
+    function showConfirmationDialog(message, onConfirm) {
+        const dialog = document.createElement('div');
+        dialog.className = 'confirmation-dialog';
+        dialog.innerHTML = `
+            <div class="confirmation-content">
+                <div class="confirmation-message">${message}</div>
+                <div class="confirmation-buttons">
+                    <button class="btn-cancel">Cancel</button>
+                    <button class="btn-confirm">Delete</button>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(dialog);
+        
+        // Add styles for confirmation dialog
+        const style = document.createElement('style');
+        style.textContent = `
+            .confirmation-dialog {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.5);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 1000;
+            }
+            
+            .confirmation-content {
+                background: white;
+                padding: 24px;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                max-width: 400px;
+                width: 90%;
+            }
+            
+            .confirmation-message {
+                color: #1A2340;
+                margin-bottom: 20px;
+                font-size: 16px;
+            }
+            
+            .confirmation-buttons {
+                display: flex;
+                justify-content: flex-end;
+                gap: 12px;
+            }
+            
+            .confirmation-buttons button {
+                padding: 8px 16px;
+                border-radius: 4px;
+                border: none;
+                cursor: pointer;
+                font-size: 14px;
+                transition: background-color 0.2s;
+            }
+            
+            .confirmation-buttons .btn-cancel {
+                background: #F5F6F8;
+                color: #1A2340;
+            }
+            
+            .confirmation-buttons .btn-cancel:hover {
+                background: #E8E9EC;
+            }
+            
+            .confirmation-buttons .btn-confirm {
+                background: #E04A1F;
+                color: white;
+            }
+            
+            .confirmation-buttons .btn-confirm:hover {
+                background: #D03D12;
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Add event listeners
+        const cancelBtn = dialog.querySelector('.btn-cancel');
+        const confirmBtn = dialog.querySelector('.btn-confirm');
+        
+        cancelBtn.addEventListener('click', () => {
+            dialog.remove();
+        });
+        
+        confirmBtn.addEventListener('click', () => {
+            onConfirm();
+            dialog.remove();
+        });
+        
+        // Close on outside click
+        dialog.addEventListener('click', (e) => {
+            if (e.target === dialog) {
+                dialog.remove();
+            }
         });
     }
   </script>
