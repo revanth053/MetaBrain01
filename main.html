@@ -5,6 +5,11 @@
   <title>MetaBrain Chat</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="main.css">
+  <!-- Add Recharts library -->
+  <script src="https://cdn.jsdelivr.net/npm/recharts@2.7.2/umd/Recharts.min.js"></script>
+  <script src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
+  <script src="chart-utils.js"></script>
   <script type="module">
     import { createChat, getAllChats, getChatsByUserId, deleteChat } from './chatApi.js';
     import { createResponse, getAllResponses, reactToResponse } from './responsesApi.js';
@@ -40,7 +45,7 @@
           </span>
           <span>Talk with Analyst</span>
         </a>
-        <a href="#" class="nav-item">
+        <a href="#" class="nav-item" id="savedReportsNav">
           <span class="icon">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="#7A8CA6" xmlns="http://www.w3.org/2000/svg">
                 <path d="M4 2C2.9 2 2.01 2.91 2.01 4L2 20C2 21.09 2.9 22 4 22H20C21.09 22 22 21.09 22 20V8C22 6.91 21.09 6 20 6H12L10 4H4C2.9 4 2 3.1 2 2V2Z"/>
@@ -251,6 +256,8 @@
       </div>
     </div>
   </div>
+
+
   <script type="module">
     import { createChat, getAllChats, getChatsByUserId, deleteChat } from './chatApi.js';
     import { createResponse, getAllResponses, reactToResponse } from './responsesApi.js';
@@ -479,26 +486,360 @@
       document.getElementById('actionTwinSection')?.remove();
     }
 
+    // Add these functions before the loadSavedReports function
+    const generateTimelineData = (baseline, points) => {
+      const data = [];
+      let currentValue = baseline;
+      
+      for (let i = 0; i < points; i++) {
+        const change = (Math.random() - 0.5) * 10;
+        currentValue = Math.max(0, Math.min(100, currentValue + change));
+        data.push({
+          month: `Month ${i + 1}`,
+          value: currentValue
+        });
+      }
+      
+      return data;
+    };
+
+    // Update the loadSavedReports function to include timeline charts
     function loadSavedReports() {
       document.querySelector('.container').style.display = 'none';
       document.getElementById('projectSection')?.remove();
       document.getElementById('actionTwinSection')?.remove();
+      
       if (!document.getElementById('savedReportsSection')) {
         const section = document.createElement('section');
         section.id = 'savedReportsSection';
-        section.innerHTML = `
-          <div class="saved-reports-header">
-            <h2>Saved Reports</h2>
-          </div>
-          <div class="saved-reports-list">
-            <div class="saved-report-card">
-              <div class="saved-report-title">TVS Motor needed to refine its..</div>
-              <div class="saved-report-date">Today</div>
+        
+        const content = `
+          <div class="flex-1 flex flex-col overflow-hidden bg-gradient-to-br from-gray-50 to-white">
+            <header class="border-b border-gray-200 p-4 flex justify-between items-center bg-white shadow-sm">
+              <div class="flex items-center text-gray-700">
+                <i data-lucide="shield" class="w-5 h-5 mr-2 text-orange-500"></i>
+                <span class="font-medium">Saved Reports</span>
+              </div>
+              <div class="flex gap-2">
+                <button class="btn btn-secondary">
+                  <i data-lucide="filter" class="w-4 h-4 mr-2"></i>
+                  Filter Reports
+                </button>
+                <button class="btn btn-primary">
+                  <i data-lucide="plus" class="w-4 h-4 mr-2"></i>
+                  New Report
+                </button>
+              </div>
+            </header>
+
+            <div class="flex-1 overflow-auto custom-scrollbar">
+              <div class="reports-grid">
+                <!-- Report Card 1 -->
+                <div class="report-card">
+                  <div class="report-card-header">
+                    <h3 class="text-lg font-semibold text-gray-800">Supply Chain Risk Assessment</h3>
+                    <p class="text-sm text-gray-500">Last updated: March 15, 2024</p>
+                  </div>
+                  <div class="report-card-body">
+                    <div class="flex justify-between items-center mb-4">
+                      <span class="text-sm text-gray-600">Risk Score</span>
+                      <span class="text-lg font-semibold text-red-600">56</span>
+                    </div>
+                    <div class="flex justify-between items-center mb-4">
+                      <span class="text-sm text-gray-600">Quality Score</span>
+                      <span class="text-lg font-semibold text-green-600">75</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                      <span class="text-sm text-gray-600">Total Assets</span>
+                      <span class="text-lg font-semibold text-gray-800">100</span>
+                    </div>
+                  </div>
+                  <div class="report-card-footer">
+                    <span class="status-badge completed">Completed</span>
+                    <div class="flex gap-2">
+                      <button class="btn btn-secondary">
+                        <i data-lucide="download" class="w-4 h-4"></i>
+                      </button>
+                      <button class="btn btn-secondary">
+                        <i data-lucide="share-2" class="w-4 h-4"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Report Card 2 -->
+                <div class="report-card">
+                  <div class="report-card-header">
+                    <h3 class="text-lg font-semibold text-gray-800">Tariff Impact Analysis</h3>
+                    <p class="text-sm text-gray-500">Last updated: March 14, 2024</p>
+                  </div>
+                  <div class="report-card-body">
+                    <div class="flex justify-between items-center mb-4">
+                      <span class="text-sm text-gray-600">Impact Score</span>
+                      <span class="text-lg font-semibold text-orange-600">42</span>
+                    </div>
+                    <div class="flex justify-between items-center mb-4">
+                      <span class="text-sm text-gray-600">Cost Impact</span>
+                      <span class="text-lg font-semibold text-red-600">$2.4M</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                      <span class="text-sm text-gray-600">Affected Items</span>
+                      <span class="text-lg font-semibold text-gray-800">24</span>
+                    </div>
+                  </div>
+                  <div class="report-card-footer">
+                    <span class="status-badge in-progress">In Progress</span>
+                    <div class="flex gap-2">
+                      <button class="btn btn-secondary">
+                        <i data-lucide="download" class="w-4 h-4"></i>
+                      </button>
+                      <button class="btn btn-secondary">
+                        <i data-lucide="share-2" class="w-4 h-4"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Report Card 3 -->
+                <div class="report-card">
+                  <div class="report-card-header">
+                    <h3 class="text-lg font-semibold text-gray-800">Supplier Performance Review</h3>
+                    <p class="text-sm text-gray-500">Last updated: March 13, 2024</p>
+                  </div>
+                  <div class="report-card-body">
+                    <div class="flex justify-between items-center mb-4">
+                      <span class="text-sm text-gray-600">Performance Score</span>
+                      <span class="text-lg font-semibold text-green-600">82</span>
+                    </div>
+                    <div class="flex justify-between items-center mb-4">
+                      <span class="text-sm text-gray-600">On-time Delivery</span>
+                      <span class="text-lg font-semibold text-green-600">94%</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                      <span class="text-sm text-gray-600">Quality Rating</span>
+                      <span class="text-lg font-semibold text-gray-800">4.2/5</span>
+                    </div>
+                  </div>
+                  <div class="report-card-footer">
+                    <span class="status-badge pending">Pending Review</span>
+                    <div class="flex gap-2">
+                      <button class="btn btn-secondary">
+                        <i data-lucide="download" class="w-4 h-4"></i>
+                      </button>
+                      <button class="btn btn-secondary">
+                        <i data-lucide="share-2" class="w-4 h-4"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         `;
-        mainContent.appendChild(section);
+        
+        section.innerHTML = content;
+        document.querySelector('main').appendChild(section);
+
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Add click handlers for buttons
+        document.querySelectorAll('.btn').forEach(button => {
+          button.addEventListener('click', function(e) {
+            const action = this.querySelector('i').getAttribute('data-lucide');
+            console.log(`Button clicked: ${action}`);
+            // Add your button click handlers here
+          });
+        });
+
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Add click handler for saved reports
+        document.getElementById('savedReportsNav').addEventListener('click', function(e) {
+            e.preventDefault();
+            showSection('savedReportsSection');
+        });
+
+        // Add click handlers for saved report buttons
+        document.querySelectorAll('.saved-report-card .action-button').forEach(button => {
+            button.addEventListener('click', function() {
+                const action = this.getAttribute('data-action');
+                const reportId = this.closest('.saved-report-card').getAttribute('data-id');
+                handleSavedReportAction(action, reportId);
+            });
+        });
+
+        // Function to handle saved report actions
+        function handleSavedReportAction(action, reportId) {
+            switch(action) {
+                case 'view':
+                    // Implement view functionality
+                    console.log('View report:', reportId);
+                    break;
+                case 'edit':
+                    // Implement edit functionality
+                    console.log('Edit report:', reportId);
+                    break;
+                case 'delete':
+                    // Implement delete functionality
+                    console.log('Delete report:', reportId);
+                    break;
+            }
+        }
       }
+    }
+
+    // Function to initialize charts
+    function initializeCharts() {
+      // Risk Score Chart
+      const riskScoreData = [
+        { name: 'China', value: 75 },
+        { name: 'Vietnam', value: 45 },
+        { name: 'Thailand', value: 60 },
+        { name: 'Mexico', value: 55 }
+      ];
+
+      const riskScoreChart = new Recharts.LineChart({
+        width: 500,
+        height: 250,
+        data: riskScoreData,
+        margin: { top: 20, right: 30, left: 20, bottom: 5 }
+      });
+
+      riskScoreChart.add(new Recharts.Line({
+        dataKey: 'value',
+        stroke: '#0066B3',
+        strokeWidth: 2,
+        dot: { fill: '#0066B3' }
+      }));
+
+      riskScoreChart.add(new Recharts.XAxis({ dataKey: 'name' }));
+      riskScoreChart.add(new Recharts.YAxis());
+      riskScoreChart.add(new Recharts.Tooltip());
+
+      // Landing Cost Chart
+      const landingCostData = [
+        { name: 'China', value: 100 },
+        { name: 'Vietnam', value: 85 },
+        { name: 'Thailand', value: 90 },
+        { name: 'Mexico', value: 95 }
+      ];
+
+      const landingCostChart = new Recharts.BarChart({
+        width: 500,
+        height: 250,
+        data: landingCostData,
+        margin: { top: 20, right: 30, left: 20, bottom: 5 }
+      });
+
+      landingCostChart.add(new Recharts.Bar({
+        dataKey: 'value',
+        fill: '#0066B3'
+      }));
+
+      landingCostChart.add(new Recharts.XAxis({ dataKey: 'name' }));
+      landingCostChart.add(new Recharts.YAxis());
+      landingCostChart.add(new Recharts.Tooltip());
+
+      // Render charts
+      ReactDOM.render(riskScoreChart, document.getElementById('riskScoreChart'));
+      ReactDOM.render(landingCostChart, document.getElementById('landingCostChart'));
+    }
+
+    // Function to load recommendation data
+    function loadRecommendationData() {
+      const recommendations = [
+        {
+          country: 'China',
+          landingCost: '$1,200',
+          tariffImpact: '25%',
+          riskScore: '75',
+          qualityScore: '85',
+          strategicFit: 'High',
+          recommendation: 'Reduce dependency'
+        },
+        {
+          country: 'Vietnam',
+          landingCost: '$950',
+          tariffImpact: '5%',
+          riskScore: '45',
+          qualityScore: '80',
+          strategicFit: 'High',
+          recommendation: 'Increase sourcing'
+        },
+        {
+          country: 'Thailand',
+          landingCost: '$1,000',
+          tariffImpact: '10%',
+          riskScore: '60',
+          qualityScore: '82',
+          strategicFit: 'Medium',
+          recommendation: 'Maintain current level'
+        },
+        {
+          country: 'Mexico',
+          landingCost: '$1,100',
+          tariffImpact: '0%',
+          riskScore: '55',
+          qualityScore: '78',
+          strategicFit: 'Medium',
+          recommendation: 'Explore opportunities'
+        }
+      ];
+
+      const tableBody = document.getElementById('recommendationTableBody');
+      tableBody.innerHTML = recommendations.map(rec => `
+        <tr class="border-b border-gray-200 hover:bg-gray-50">
+          <td class="py-3 px-4 text-left">${rec.country}</td>
+          <td class="py-3 px-4 text-right">${rec.landingCost}</td>
+          <td class="py-3 px-4 text-right">${rec.tariffImpact}</td>
+          <td class="py-3 px-4 text-right">${rec.riskScore}</td>
+          <td class="py-3 px-4 text-right">${rec.qualityScore}</td>
+          <td class="py-3 px-4 text-center">${rec.strategicFit}</td>
+          <td class="py-3 px-4 text-center">${rec.recommendation}</td>
+        </tr>
+      `).join('');
+    }
+
+    // Function to load key insights
+    function loadKeyInsights() {
+      const keyInsights = [
+        "China's high concentration risk (90% of sourcing) and tariff impact create significant exposure",
+        "Vietnam emerges as the optimal alternative with lower risk scores and high strategic fit",
+        "A phased transition strategy would yield significant risk reduction and cost savings"
+      ];
+
+      const insightsList = document.getElementById('keyInsightsList');
+      insightsList.innerHTML = keyInsights.map(insight => `
+        <li>${insight}</li>
+      `).join('');
+
+      const recommendationText = document.getElementById('recommendationText');
+      recommendationText.innerHTML = `
+        <strong>Recommendation:</strong> Implement a phased transition beginning with volume shift to Vietnam, followed by secondary sourcing development in Thailand and Mexico.
+      `;
+    }
+
+    // Function to download report
+    function downloadReport() {
+      // Create a temporary link element
+      const link = document.createElement('a');
+      link.href = '#';
+      link.download = 'supply-chain-risk-assessment.pdf';
+      
+      // Simulate click to trigger download
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      showNotification('Report download started');
+    }
+
+    // Function to start new assessment
+    function startNewAssessment() {
+      showNotification('Starting new assessment...');
+      // Add your new assessment logic here
     }
 
     function loadProject() {
@@ -1447,7 +1788,18 @@
     }
 
     // Load chats when page loads
-    document.addEventListener('DOMContentLoaded', loadUserChats);
+    document.addEventListener('DOMContentLoaded', () => {
+      loadUserChats();
+      
+      // Initialize saved reports section if it exists
+      const savedReportsNav = document.querySelector('.nav-item:nth-child(3)');
+      if (savedReportsNav) {
+        savedReportsNav.addEventListener('click', (e) => {
+          e.preventDefault();
+          loadSavedReports();
+        });
+      }
+    });
 
     // Sidebar toggle functionality with animated icon
     import { handleFileUpload } from './upload.js';
@@ -1704,6 +2056,158 @@
             }
         });
     }
+
+    // Add click handler for Saved Reports navigation
+    document.getElementById('savedReportsNav').addEventListener('click', function(e) {
+        e.preventDefault();
+        document.querySelector('.container').style.display = 'none';
+        document.getElementById('projectSection')?.remove();
+        document.getElementById('actionTwinSection')?.remove();
+        
+        if (!document.getElementById('savedReportsSection')) {
+            const section = document.createElement('section');
+            section.id = 'savedReportsSection';
+            
+            const content = `
+                <div class="flex-1 flex flex-col overflow-hidden bg-gradient-to-br from-gray-50 to-white">
+                    <header class="border-b border-gray-200 p-4 flex justify-between items-center bg-white shadow-sm">
+                        <div class="flex items-center text-gray-700">
+                            <i data-lucide="shield" class="w-5 h-5 mr-2 text-orange-500"></i>
+                            <span class="font-medium">Saved Reports</span>
+                        </div>
+                        <div class="flex gap-2">
+                            <button class="btn btn-secondary">
+                                <i data-lucide="filter" class="w-4 h-4 mr-2"></i>
+                                Filter Reports
+                            </button>
+                            <button class="btn btn-primary">
+                                <i data-lucide="plus" class="w-4 h-4 mr-2"></i>
+                                New Report
+                            </button>
+                        </div>
+                    </header>
+
+                    <div class="flex-1 overflow-auto custom-scrollbar">
+                        <div class="reports-grid">
+                            <!-- Report Card 1 -->
+                            <div class="report-card">
+                                <div class="report-card-header">
+                                    <h3 class="text-lg font-semibold text-gray-800">Supply Chain Risk Assessment</h3>
+                                    <p class="text-sm text-gray-500">Last updated: March 15, 2024</p>
+                                </div>
+                                <div class="report-card-body">
+                                    <div class="flex justify-between items-center mb-4">
+                                        <span class="text-sm text-gray-600">Risk Score</span>
+                                        <span class="text-lg font-semibold text-red-600">56</span>
+                                    </div>
+                                    <div class="flex justify-between items-center mb-4">
+                                        <span class="text-sm text-gray-600">Quality Score</span>
+                                        <span class="text-lg font-semibold text-green-600">75</span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-sm text-gray-600">Total Assets</span>
+                                        <span class="text-lg font-semibold text-gray-800">100</span>
+                                    </div>
+                                </div>
+                                <div class="report-card-footer">
+                                    <span class="status-badge completed">Completed</span>
+                                    <div class="flex gap-2">
+                                        <button class="btn btn-secondary">
+                                            <i data-lucide="download" class="w-4 h-4"></i>
+                                        </button>
+                                        <button class="btn btn-secondary">
+                                            <i data-lucide="share-2" class="w-4 h-4"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Report Card 2 -->
+                            <div class="report-card">
+                                <div class="report-card-header">
+                                    <h3 class="text-lg font-semibold text-gray-800">Tariff Impact Analysis</h3>
+                                    <p class="text-sm text-gray-500">Last updated: March 14, 2024</p>
+                                </div>
+                                <div class="report-card-body">
+                                    <div class="flex justify-between items-center mb-4">
+                                        <span class="text-sm text-gray-600">Impact Score</span>
+                                        <span class="text-lg font-semibold text-orange-600">42</span>
+                                    </div>
+                                    <div class="flex justify-between items-center mb-4">
+                                        <span class="text-sm text-gray-600">Cost Impact</span>
+                                        <span class="text-lg font-semibold text-red-600">$2.4M</span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-sm text-gray-600">Affected Items</span>
+                                        <span class="text-lg font-semibold text-gray-800">24</span>
+                                    </div>
+                                </div>
+                                <div class="report-card-footer">
+                                    <span class="status-badge in-progress">In Progress</span>
+                                    <div class="flex gap-2">
+                                        <button class="btn btn-secondary">
+                                            <i data-lucide="download" class="w-4 h-4"></i>
+                                        </button>
+                                        <button class="btn btn-secondary">
+                                            <i data-lucide="share-2" class="w-4 h-4"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Report Card 3 -->
+                            <div class="report-card">
+                                <div class="report-card-header">
+                                    <h3 class="text-lg font-semibold text-gray-800">Supplier Performance Review</h3>
+                                    <p class="text-sm text-gray-500">Last updated: March 13, 2024</p>
+                                </div>
+                                <div class="report-card-body">
+                                    <div class="flex justify-between items-center mb-4">
+                                        <span class="text-sm text-gray-600">Performance Score</span>
+                                        <span class="text-lg font-semibold text-green-600">82</span>
+                                    </div>
+                                    <div class="flex justify-between items-center mb-4">
+                                        <span class="text-sm text-gray-600">On-time Delivery</span>
+                                        <span class="text-lg font-semibold text-green-600">94%</span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-sm text-gray-600">Quality Rating</span>
+                                        <span class="text-lg font-semibold text-gray-800">4.2/5</span>
+                                    </div>
+                                </div>
+                                <div class="report-card-footer">
+                                    <span class="status-badge pending">Pending Review</span>
+                                    <div class="flex gap-2">
+                                        <button class="btn btn-secondary">
+                                            <i data-lucide="download" class="w-4 h-4"></i>
+                                        </button>
+                                        <button class="btn btn-secondary">
+                                            <i data-lucide="share-2" class="w-4 h-4"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            section.innerHTML = content;
+            document.querySelector('main').appendChild(section);
+
+            // Initialize Lucide icons
+            lucide.createIcons();
+
+            // Add click handlers for buttons
+            document.querySelectorAll('.btn').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    const action = this.querySelector('i').getAttribute('data-lucide');
+                    console.log(`Button clicked: ${action}`);
+                    // Add your button click handlers here
+                });
+            });
+        }
+    });
   </script>
 </body>
 </html>
