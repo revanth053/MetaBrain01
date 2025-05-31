@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MetaBrain Chat</title>
+    <link rel="stylesheet" href="styles1.css">
+    <!-- Chart.js or Recharts CDN here if needed -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body>
+    <div class="dashboard-wrapper">
+        <nav class="sidebar" aria-label="Main Navigation">
+            <div class="sidebar-header">
+                <img src="images1/logo.png" alt="Metabrain Logo" class="sidebar-logo" />
+                <span class="sidebar-title"></span>
+            </div>
+            <hr class="sidebar-divider" />
+            <div>
+      <div class="logo">
+        <a href="#" id="logoHomeBtn">
+          
+          <svg width="38" height="38" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" class="logo-img closed-logo" style="display: none;">
+            <path d="M19.9999 18.3334L3.33325 0H9.99992L23.3333 18.3334H19.9999ZM19.9999 18.3334L36.6666 0H29.9999L6.66659 39.1667H13.3333L22.4999 22.5L29.9999 39.1667H36.6666L19.9999 18.3334Z" fill="#0066B3"/>
+          </svg>
+        </a>
+      </div>
+      <nav class="nav-menu">
+        <a href="main.html" class="nav-item" id="actionTwinNav">
+          <span class="icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="#7A8CA6" xmlns="http://www.w3.org/2000/svg">
+              <path d="M20 6H12L10 4H4C2.9 4 2.01 4.9 2.01 6L2 18C2 19.1 2.9 20 4 20H20C21.1 20 22 19.1 22 18V8C22 6.9 21.1 6 20 6ZM10 17H7V14H10V17ZM13 17H16V14H13V17ZM10 13H7V10H10V13ZM13 13H16V10H13V13Z"/>
+            </svg>
+          </span>
+          <span>Action Twin</span>
+        </a>
+        <a href="main.html" class="nav-item" id="talkAnalystNav">
+          <span class="icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="#7A8CA6" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 2C6.48 2 2 6.48 2 12C2 13.9 2.55 15.66 3.5 17.18L2 22L6.82 20.5C8.34 21.45 10.1 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM15.5 13.5C16.33 13.5 17 12.83 17 12C17 11.17 16.33 10.5 15.5 10.5C14.67 10.5 14 11.17 14 12C14 12.83 14.67 13.5 15.5 13.5ZM8.5 13.5C9.33 13.5 10 12.83 10 12C10 11.17 9.33 10.5 8.5 10.5C7.67 10.5 7 11.17 7 12C7 12.83 7.67 13.5 8.5 13.5ZM12 15.5C11.17 15.5 10.5 16.17 10.5 17C10.5 17.83 11.17 18.5 12 18.5C12.83 18.5 13.5 17.83 13.5 17C13.5 16.17 12.83 15.5 12 15.5Z"/>
+            </svg>
+          </span>
+          <span>Talk with Analyst</span>
+        </a>
+        <a href="report.html" class="nav-item active" id="savedReportsNav">
+          <span class="icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="#7A8CA6" xmlns="http://www.w3.org/2000/svg">
+              <path d="M4 2C2.9 2 2.01 2.91 2.01 4L2 20C2 21.09 2.9 22 4 22H20C21.09 22 22 21.09 22 20V8C22 6.91 21.09 6 20 6H12L10 4H4C2.9 4 2 3.1 2 2V2Z"/>
+              <rect x="7" y="9" width="10" height="8" rx="1" fill="white"/>
+            </svg>
+          </span>
+          <span>Saved Reports</span>
+        </a>
+        <a href="main.html" class="nav-item" id="projectNav">
+          <span class="icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="#7A8CA6" xmlns="http://www.w3.org/2000/svg">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M21 17H3V19H21V17ZM21 15H3V13H21V15ZM21 11H3V9H21V11ZM21 7H3V5H21V7Z"/>
+            </svg>
+          </span>
+          <span>Project</span>
+        </a>
+      </nav>
+    </div>
+            <div class="sidebar-user-info">
+                <div class="user-initials">JD</div>
+                <div class="user-details">
+                    <div class="user-name">John Deo</div>
+                    <div class="user-role">Executive Leadership</div>
+                </div>
+            </div>
+        </nav>
+        <main class="main-content">
+            <div class="button-container">
+                <button class="btn download-report">Download Report</button>
+                <button class="btn new-report">New Report</button>
+            </div>
+            <header class="summary-header">
+                <section class="summary-cards">
+                    <article class="summary-card" id="risk-card">
+                        <div class="summary-card-header">
+                            <h2>Risk Score</h2>
+                            <span class="summary-score risk">56</span>
+                        </div>
+                        <div class="gauge" id="risk-gauge"></div>
+                        <div class="gauge-labels">
+                            <span class="low">Low</span>
+                            <span class="medium">Medium</span>
+                            <span class="high">High</span>
+                            <span class="critical">Critical</span>
+                        </div>
+                        <div class="summary-assets">On-prem Assets: 50</div>
+                    </article>
+                    <article class="summary-card" id="quality-card">
+                        <div class="summary-card-header">
+                            <h2>Quality Score</h2>
+                            <span class="summary-score quality">75</span>
+                        </div>
+                        <div class="gauge" id="quality-gauge"></div>
+                        <div class="gauge-labels">
+                            <span class="low">Low</span>
+                            <span class="medium">Medium</span>
+                            <span class="high">High</span>
+                            <span class="critical">Critical</span>
+                        </div>
+                        <div class="summary-assets">Cloud Assets: 50</div>
+                    </article>
+                    <article class="summary-card" id="actual-card">
+                        <div class="summary-card-header">
+                            <h2>Actual Score</h2>
+                            <span class="summary-score actual">80</span>
+                        </div>
+                        <div class="linechart" id="actual-linechart"></div>
+                        <div class="summary-date">06 July 2023 - 31 Jan 2025</div>
+                    </article>
+                </section>
+            </header>
+            <section class="dashboard-title">
+               <div class="dashboard-title-main">
+                 <svg class="dashboard-title-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                   <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                   <line x1="12" y1="9" x2="12" y2="13"></line>
+                   <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                 </svg>
+                 <h1>Automotive Sourcing Risk Analysis</h1>
+               </div>
+               <p>Visualizing critical sourcing decisions based on tariff changes and risk factors</p>
+            </section>
+            <section class="dashboard-row">
+                <article class="chart-card">
+                    <h3>Risk Timeline</h3>
+                    <div class="chart" id="risk-timeline"></div>
+                </article>
+                <article class="chart-card">
+                    <h3>Risk Distribution</h3>
+                    <div class="chart" id="risk-distribution"></div>
+                </article>
+            </section>
+            <section class="dashboard-row">
+                <article class="chart-card">
+                    <h3>Supply Chain Risk Metrics</h3>
+                    <div class="metrics" id="supply-metrics"></div>
+                </article>
+                <article class="chart-card">
+                    <h3>Redundancy, Political & Currency Risk</h3>
+                    <div class="metrics" id="redundancy-metrics"></div>
+                </article>
+            </section>
+            <section class="dashboard-row">
+                <article class="chart-card">
+                    <div class="chart-card-header">
+                        <h3>Strategic Decision Matrix Analysis</h3>
+                        <span class="chart-note">Key observations</span>
+                    </div>
+                    <div class="chart" id="decision-matrix"></div>
+                    <div class="chart-desc">Key observations:
+                        <ul>
+                            <li>China (dark blue dot) demonstrates a high Risk Score (-58) and relatively low Qualitative Score (-58), positioning it in the least favorable quadrant of the matrix</li>
+                            <li>Two light blue dots (likely Vietnam and Poland based on subsequent data) exhibit favorable positioning with low Risk Scores (~30-40) and high Qualitative Scores (~75-78)</li>
+                            <li>Medium blue dots (likely Thailand, Mexico, and India) show moderate Risk Scores (~32-38) and good Qualitative Scores (~65-72)</li>
+                        </ul>
+                        This visualization effectively implements the "Risk Quantification" and "Qualitative evaluation of Alternatives" modules specified in the framework to Solve Prompt.
+                        <br>
+                        Bubble size represents landing cost. Color indicates recommendation (dark gray = reconsider, light gray = medium fit, cyan = high fit).
+                    </div>
+                </article>
+                <article class="chart-card">
+                    <h3>Risk vs. Quality Assessment</h3>
+                    <div class="chart" id="risk-quality"></div>
+                    <div class="chart-desc">The radar chart visualization provides a multidimensional view of each country's risk and quality profiles. This directly operationalizes the Risk Scorecard (0-100) and Qualitative Scorecard (0-100) matrices described in the Prompt Guideline.
+                        <br><br>
+                        <strong>Analysis:</strong>
+                        <ul>
+                            <li>The light blue area represents Quality Score dimensions, showing stronger performance in Poland, Vietnam, and India compared to China</li>
+                            <li>The indigo area represents Risk Score dimensions, with China displaying a significantly larger risk footprint</li>
+                            <li>This visual reinforces that alternatives to China provide more balanced risk-quality profiles</li>
+                            <li>Lower risk scores (indigo) and higher quality scores (light blue) are better.</li>
+                        </ul>
+                    </div>
+                </article>
+            </section>
+            <section class="dashboard-row">
+                <article class="chart-card">
+                    <h3>Landing Cost Analysis</h3>
+                    <div class="chart" id="landing-cost"></div>
+                    <div class="chart-desc formula">The Landing Cost Analysis chart exemplifies the 'Cost Analysis (Baseline & New Tariff)' module from the Prompt Guideline. The visualization shows:
+                        <ul>
+                            <li>China has the highest total landing cost (~$64.10) with a substantial tariff impact (+$7.20)</li>
+                            <li>Vietnam offers the most competitive landing cost (~$56.85) with a slight tariff benefit (~$-0.05)</li>
+                            <li>Mexico demonstrates the most favorable tariff impact (~$-1.10)</li>
+                            <li>Poland shows a moderate landing cost (~$59.70) despite some tariff impact (+$2.80)</li>
+                        </ul>
+                        <span class="chart-desc formula-box">Landing Cost = Product Cost + Freight + Insurance + (Product Cost × Tariff Rate) + Inland Logistics + FX Adjustment</span>
+                        <br>
+                        Total landing costs shown with tariff impact overlay. Negative impact values represent savings.
+                    </div>
+                </article>
+                <article class="chart-card">
+                    <h3>Total Benefit Score vs China</h3>
+                    <div class="chart" id="benefit-score"></div>
+                    <div class="chart-desc">The Total Benefit Score chart quantifies the advantages of alternative sourcing locations compared to China, using the weighted formula specified in the guideline.
+                        <br>
+                        <span class="chart-desc formula-box">Total Benefit Score = (△ Risk_Score × 0.6) - (△ Landing_Cost % × 0.4)</span>
+                        <br><br>
+                        Key highlights:
+                        <ul>
+                            <li>Poland achieves the highest total benefit score (15.4), with significant risk reduction (22.7) and meaningful cost savings (6.9%)</li>
+                            <li>Vietnam and Thailand show strong benefit scores around 15-19</li>
+                            <li>India displays the lowest benefit score but still represents a significant improvement over China</li>
+                        </ul>
+                    </div>
+                </article>
+            </section>
+            <section class="dashboard-row">
+                <article class="chart-card">
+                    <h3>Risk Factor Comparison: China vs Vietnam</h3>
+                    <div class="chart" id="risk-factor-comparison"></div>
+                    <div class="chart-desc">The radar chart comparing China and Vietnam specifically highlights the six risk factors identified in the Risk Scorecard matrix from the guideline:
+                        <ul>
+                            <li>Tariff Volatility (weighted 20%)</li>
+                            <li>Concentration Risk (weighted 15%)</li>
+                            <li>Political Risk (weighted 20%)</li>
+                            <li>Non-Tariff Barriers (weighted 10%)</li>
+                            <li>Currency Risk (weighted 15%)</li>
+                            <li>Lead Time (weighted 20%)</li>
+                        </ul>
+                        <span class="chart-desc-small">Detailed risk factor breakdown showing weighted scores for each component.</span>
+                    </div>
+                </article>
+                <article class="chart-card">
+                    <h3>Qualitative Metrics Comparison</h3>
+                    <div class="chart" id="qualitative-metrics"></div>
+                    <div class="chart-desc">This bar chart visualization implements the Qualitative Scorecard from the guideline, showing three key dimensions:
+                        <ul>
+                            <li>Competitiveness (analogous to Country Competitiveness, 15% weight in guideline)</li>
+                            <li>Logistics Performance (directly from guideline, 15% weight)</li>
+                            <li>ESG (corresponding to ESG Compliance, 10% weight in guideline)</li>
+                            <li>Strategic Fit (directly from guideline, 15% weight)</li>
+                        </ul>
+                        <span class="chart-desc-small">Comparison of qualitative factors across alternative sourcing countries.</span>
+                    </div>
+                </article>
+            </section>
+            <section class="recommendation-section">
+                <h3>Recommendation Summary</h3>
+                <div class="table-wrapper" id="recommendation-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>COUNTRY</th>
+                                <th>LANDING COST</th>
+                                <th>TARIFF IMPACT</th>
+                                <th>RISK SCORE</th>
+                                <th>QUALITY SCORE</th>
+                                <th>STRATEGIC FIT</th>
+                                <th>RECOMMENDATION</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>China</td>
+                                <td>$64.10</td>
+                                <td>+7.20</td>
+                                <td>56.4</td>
+                                <td>58.0</td>
+                                <td>Medium</td>
+                                <td><span class="recommendation-box recommendation-reconsider">Reconsider</span></td>
+                            </tr>
+                            <tr>
+                                <td>Vietnam</td>
+                                <td>$56.85</td>
+                                <td>-0.05</td>
+                                <td>30.7</td>
+                                <td>74.8</td>
+                                <td>High</td>
+                                <td><span class="recommendation-box recommendation-consider-switching">Consider switching</span></td>
+                            </tr>
+                            <tr>
+                                <td>Thailand</td>
+                                <td>$56.43</td>
+                                <td>0.47</td>
+                                <td>32.6</td>
+                                <td>72.0</td>
+                                <td>Medium</td>
+                                <td><span class="recommendation-box recommendation-consider-switching">Consider switching</span></td>
+                            </tr>
+                            <tr>
+                                <td>Mexico</td>
+                                <td>$55.80</td>
+                                <td>-1.10</td>
+                                <td>35.2</td>
+                                <td>68.6</td>
+                                <td>Medium</td>
+                                <td><span class="recommendation-box recommendation-consider-switching">Consider switching</span></td>
+                            </tr>
+                            <tr>
+                                <td>Poland</td>
+                                <td>$59.70</td>
+                                <td>+2.80</td>
+                                <td>33.8</td>
+                                <td>70.7</td>
+                                <td>Medium</td>
+                                <td><span class="recommendation-box recommendation-consider-switching">Consider switching</span></td>
+                            </tr>
+                            <tr>
+                                <td>India</td>
+                                <td>$56.57</td>
+                                <td>-0.33</td>
+                                <td>38.8</td>
+                                <td>76.9</td>
+                                <td>High</td>
+                                <td><span class="recommendation-box recommendation-consider-switching">Consider switching</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="table-desc">Based on the analysis: The 25% US-China tariff Increases landing costs by $7.20 per unit. Vietnam offers the best alternative with a 6% cost reduction, 26-point risk improvement, and high strategic fit. Mexico provides the most tariff savings but has higher risk factors than Vietnam or Thailand.</div>
+            </section>
+            <section class="executive-summary-section">
+                <h3>Executive Summary</h3>
+                <div class="executive-summary" id="executive-summary">
+                    <h4>Key Insights:</h4>
+                    <ul>
+                        <li>China's high concentration risk (90% of sourcing) and tariff impact ($7.20/unit) create significant exposure</li>
+                        <li>Vietnam emerges as the optimal alternative with 46% lower risk scores, lower landed costs, and high strategic fit</li>
+                        <li>A phased transition strategy reducing China dependency to 50% would yield approximately 28% risk reduction and 5% cost savings</li>
+                        <li>Thailand and Mexico provide strong alternatives for a diversified multi-sourcing approach</li>
+                        <li>ESG and strategic fit scores favor India for long-term strategic partnership development</li>
+                    </ul>
+                    <h4>Recommendation:</h4>
+                    <p>Implement a phased transition beginning with 30% volume shift to Vietnam, followed by secondary sourcing development in Thailand and Mexico. Maintain strategic supplier development in India for long-term resilience.</p>
+                    <h4>Next Steps:</h4>
+                    <ul>
+                        <li>Conduct detailed RFQ process with alternative suppliers in low-tariff regions</li>
+                        <li>Perform qualification testing for critical components from new suppliers</li>
+                        <li>Gradually transition high-risk components to dual-sourcing model</li>
+                        <li>Implement monthly landed cost and risk score tracking system</li>
+                        <li>Develop contingency plans for potential trade disruptions in high-risk regions</li>
+                    </ul>
+                    <h4>Conclusion:</h4>
+                    <p>The comprehensive analysis demonstrates that a strategic shift away from China-centric sourcing represents a significant opportunity to reduce costs, mitigate risks, and enhance overall supply chain resilience in the automotive industry. The data clearly supports a diversified approach with emphasis on Vietnam and Poland as primary alternatives, supplemented by strategic positions in Mexico and Thailand. By following the recommended implementation approach, these benefits can be realized while minimizing transition disruptions.</p>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script src="data1.js"></script>
+    <script src="charts1.js"></script>
+    <script src="script1.js"></script>
+    <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      if (window.DashboardGraphs && window.DashboardGraphs.initializeCharts) {
+        window.DashboardGraphs.initializeCharts();
+      }
+    });
+
+    // Add navigation event handlers
+    document.addEventListener('DOMContentLoaded', function() {
+        // Action Twin navigation
+        const actionTwinNav = document.getElementById('actionTwinNav');
+        if (actionTwinNav) {
+            actionTwinNav.addEventListener('click', function(e) {
+                e.preventDefault();
+                window.location.href = 'main.html';
+                // The loadActionTwinPage function will be called when main.html loads
+            });
+        }
+
+        // Talk with Analyst navigation
+        const talkAnalystNav = document.getElementById('talkAnalystNav');
+        if (talkAnalystNav) {
+            talkAnalystNav.addEventListener('click', function(e) {
+                e.preventDefault();
+                window.location.href = 'main.html';
+                // The talkAnalystModal will be shown when main.html loads
+            });
+        }
+
+        // Project navigation
+        const projectNav = document.getElementById('projectNav');
+        if (projectNav) {
+            projectNav.addEventListener('click', function(e) {
+                e.preventDefault();
+                window.location.href = 'main.html';
+                // The loadProject function will be called when main.html loads
+            });
+        }
+
+        // Saved Reports navigation is already active on this page
+        const savedReportsNav = document.getElementById('savedReportsNav');
+        if (savedReportsNav) {
+            savedReportsNav.addEventListener('click', function(e) {
+                e.preventDefault();
+                // Already on the reports page
+            });
+        }
+    });
+    </script>
+</body>
+</html> 
