@@ -53,6 +53,22 @@ body {
   overflow: hidden; /* Hide any overflow outside the main flex children */
 }
 
+/* image-56 styles*/
+.image-56{
+  width: 100px;
+  display:center;
+  margin-left: 110px;
+  padding-bottom:30px;
+}
+
+/* image-80 styles*/
+.image-80{
+  width: 300px;
+  display:center;
+  margin-left: 20px;
+  padding-bottom:30px;
+}
+
 /* === Sidebar === */
 .sidebar {
   width: 270px;
@@ -400,6 +416,14 @@ body {
   gap: 2rem;
   margin-bottom: 2rem;
 }
+
+.dashboard-row1{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 2fr)); /* Responsive grid for charts */
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
 .chart-card {
   background: var(--card-bg);
   border: 1px solid var(--card-border);
@@ -410,6 +434,38 @@ body {
   flex-direction: column;
   min-width: 0;
 }
+
+.chart-card1{
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.risk2{
+  width:200px;
+  margin-left:150px;
+  margin-top:35px;
+}
+
+.strategic{
+  margin-bottom:10px;
+}
+
+.Quality{
+  width:350px;
+  margin-left:100px;
+}
+
+.metrics{
+  width:600px;
+  margin-left:-40px;
+  margin-bottom:40px;
+}
+
 .chart-card h3 {
   font-size: 1rem;
   font-weight: 600;
