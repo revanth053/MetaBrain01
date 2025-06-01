@@ -8,6 +8,13 @@
     <!-- Chart.js or Recharts CDN here if needed -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+     <script>
+        // Verify Chart.js is loaded
+        if (typeof Chart === 'undefined') {
+            console.error('Chart.js failed to load');
+            document.write('<div style="color: red; padding: 20px;">Error: Chart.js failed to load. Please check your internet connection and refresh the page.</div>');
+        }
+    </script>
 </head>
 <body>
     <div class="dashboard-wrapper">
@@ -16,7 +23,7 @@
                 <img src="images1/logo.png" alt="Metabrain Logo" class="sidebar-logo" />
                 <span class="sidebar-title"></span>
             </div>
-            <hr class="sidebar-divider" />
+            
             <div>
       <div class="logo">
         <a href="#" id="logoHomeBtn">
@@ -27,40 +34,40 @@
         </a>
       </div>
       <nav class="nav-menu">
-        <a href="main.html" class="nav-item" id="actionTwinNav">
-          <span class="icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="#7A8CA6" xmlns="http://www.w3.org/2000/svg">
-              <path d="M20 6H12L10 4H4C2.9 4 2.01 4.9 2.01 6L2 18C2 19.1 2.9 20 4 20H20C21.1 20 22 19.1 22 18V8C22 6.9 21.1 6 20 6ZM10 17H7V14H10V17ZM13 17H16V14H13V17ZM10 13H7V10H10V13ZM13 13H16V10H13V13Z"/>
-            </svg>
-          </span>
-          <span>Action Twin</span>
-        </a>
-        <a href="main.html" class="nav-item" id="talkAnalystNav">
-          <span class="icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="#7A8CA6" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 2C6.48 2 2 6.48 2 12C2 13.9 2.55 15.66 3.5 17.18L2 22L6.82 20.5C8.34 21.45 10.1 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM15.5 13.5C16.33 13.5 17 12.83 17 12C17 11.17 16.33 10.5 15.5 10.5C14.67 10.5 14 11.17 14 12C14 12.83 14.67 13.5 15.5 13.5ZM8.5 13.5C9.33 13.5 10 12.83 10 12C10 11.17 9.33 10.5 8.5 10.5C7.67 10.5 7 11.17 7 12C7 12.83 7.67 13.5 8.5 13.5ZM12 15.5C11.17 15.5 10.5 16.17 10.5 17C10.5 17.83 11.17 18.5 12 18.5C12.83 18.5 13.5 17.83 13.5 17C13.5 16.17 12.83 15.5 12 15.5Z"/>
-            </svg>
-          </span>
-          <span>Talk with Analyst</span>
-        </a>
-        <a href="report.html" class="nav-item active" id="savedReportsNav">
-          <span class="icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="#7A8CA6" xmlns="http://www.w3.org/2000/svg">
-              <path d="M4 2C2.9 2 2.01 2.91 2.01 4L2 20C2 21.09 2.9 22 4 22H20C21.09 22 22 21.09 22 20V8C22 6.91 21.09 6 20 6H12L10 4H4C2.9 4 2 3.1 2 2V2Z"/>
-              <rect x="7" y="9" width="10" height="8" rx="1" fill="white"/>
-            </svg>
-          </span>
-          <span>Saved Reports</span>
-        </a>
-        <a href="main.html" class="nav-item" id="projectNav">
-          <span class="icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="#7A8CA6" xmlns="http://www.w3.org/2000/svg">
-              <path fill-rule="evenodd" clip-rule="evenodd" d="M21 17H3V19H21V17ZM21 15H3V13H21V15ZM21 11H3V9H21V11ZM21 7H3V5H21V7Z"/>
-            </svg>
-          </span>
-          <span>Project</span>
-        </a>
-      </nav>
+                    <a href="main.html" class="nav-item" id="actionTwinNav">
+                        <span class="icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="#7A8CA6" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M20 6H12L10 4H4C2.9 4 2.01 4.9 2.01 6L2 18C2 19.1 2.9 20 4 20H20C21.1 20 22 19.1 22 18V8C22 6.9 21.1 6 20 6ZM10 17H7V14H10V17ZM13 17H16V14H13V17ZM10 13H7V10H10V13ZM13 13H16V10H13V13Z"/>
+                            </svg>
+                        </span>
+                        <span>Action Twin</span>
+                    </a>
+                    <a href="main.html" class="nav-item" id="talkAnalystNav">
+                        <span class="icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="#7A8CA6" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 2C6.48 2 2 6.48 2 12C2 13.9 2.55 15.66 3.5 17.18L2 22L6.82 20.5C8.34 21.45 10.1 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM15.5 13.5C16.33 13.5 17 12.83 17 12C17 11.17 16.33 10.5 15.5 10.5C14.67 10.5 14 11.17 14 12C14 12.83 14.67 13.5 15.5 13.5ZM8.5 13.5C9.33 13.5 10 12.83 10 12C10 11.17 9.33 10.5 8.5 10.5C7.67 10.5 7 11.17 7 12C7 12.83 7.67 13.5 8.5 13.5ZM12 15.5C11.17 15.5 10.5 16.17 10.5 17C10.5 17.83 11.17 18.5 12 18.5C12.83 18.5 13.5 17.83 13.5 17C13.5 16.17 12.83 15.5 12 15.5Z"/>
+                            </svg>
+                        </span>
+                        <span>Talk with Analyst</span>
+                    </a>
+                    <a href="report.html" class="nav-item active" id="savedReportsNav">
+                        <span class="icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="#7A8CA6" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M4 2C2.9 2 2.01 2.91 2.01 4L2 20C2 21.09 2.9 22 4 22H20C21.09 22 22 21.09 22 20V8C22 6.91 21.09 6 20 6H12L10 4H4C2.9 4 2 3.1 2 2V2Z"/>
+                                <rect x="7" y="9" width="10" height="8" rx="1" fill="white"/>
+                            </svg>
+                        </span>
+                        <span>Saved Reports</span>
+                    </a>
+                    <a href="main.html" class="nav-item" id="projectNav">
+                        <span class="icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="#7A8CA6" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" clip-rule="evenodd" d="M21 17H3V19H21V17ZM21 15H3V13H21V15ZM21 11H3V9H21V11ZM21 7H3V5H21V7Z"/>
+                            </svg>
+                        </span>
+                        <span>Project</span>
+                    </a>
+                </nav>
     </div>
             <div class="sidebar-user-info">
                 <div class="user-initials">JD</div>
@@ -70,11 +77,25 @@
                 </div>
             </div>
         </nav>
-        <main class="main-content">
+        <main class="main-content" id="main">
+            <div class="top-bar">
+                        <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="#1A2340" xmlns="http://www.w3.org/2000/svg">
+                                <rect x="4" y="5" width="16" height="2" rx="1"/>
+                                <rect x="4" y="11" width="16" height="2" rx="1"/>
+                                <rect x="4" y="17" width="16" height="2" rx="1"/>
+                            </svg>
+                        </button>
+                        <span class="chat-title-text" id="currentChatTitle">Saved Reports</span>
+                    </div>
             <div class="button-container">
                 <button class="btn download-report">Download Report</button>
                 <button class="btn new-report">New Report</button>
             </div>
+            <svg class="line" width="18" height="18" fill="none" stroke="white" stroke-width="2">
+                        <line x1="9" y1="4" x2="9" y2="14"/>
+                        <line x1="4" y1="9" x2="14" y2="9"/>
+                      </svg>
             <header class="summary-header">
                 <section class="summary-cards">
                     <article class="summary-card" id="risk-card">

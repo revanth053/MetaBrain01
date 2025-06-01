@@ -192,6 +192,8 @@ function addEventListeners() {
     });
 }
 
+
+
 // Utility functions
 function formatCurrency(value) {
     return new Intl.NumberFormat('en-US', {
