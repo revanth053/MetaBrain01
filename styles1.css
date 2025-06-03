@@ -125,14 +125,10 @@ body {
 
 
 /* chart-56 styles*/
-  .chart {
-      width:100px;
+  .chart1 {
+    padding-top:50px;
     }
-
-    .chart2{
-      width:auto;
-    }
-
+    
 /* image-80 styles*/
 .image-80{
   width: 0px;

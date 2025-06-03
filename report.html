@@ -15,26 +15,76 @@
             console.error('Chart.js failed to load');
             document.write('<div style="color: red; padding: 20px;">Error: Chart.js failed to load. Please check your internet connection and refresh the page.</div>');
         }
+
+        // Function to update user profile information
+        function updateUserProfile() {
+            const userData = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user') || '{}');
+            const userProfileSection = document.querySelector('.user-profile');
+            
+            if (!userData.email) {
+                // If no user is logged in, hide the profile section
+                if (userProfileSection) {
+                    userProfileSection.style.display = 'none';
+                }
+                return;
+            }
+
+            // Show the profile section if it was hidden
+            if (userProfileSection) {
+                userProfileSection.style.display = 'flex';
+            }
+
+            // Get the display name from user data or use email username
+            const displayName = userData.name || userData.email.split('@')[0];
+            
+            // Update user name
+            const userNameElement = document.querySelector('.profile-name');
+            if (userNameElement) {
+                userNameElement.textContent = displayName;
+            }
+
+            // Update user initials
+            const initialsElement = document.querySelector('.profile-img');
+            if (initialsElement) {
+                const initials = displayName
+                    .split(/[\s@]/) // Split by space or @ symbol
+                    .map(n => n[0])
+                    .join('')
+                    .toUpperCase()
+                    .substring(0, 2);
+                initialsElement.textContent = initials;
+            }
+
+            // Update user role
+            const userRoleElement = document.querySelector('.profile-role');
+            if (userRoleElement) {
+                const role = userData.role ? 
+                    userData.role.charAt(0).toUpperCase() + userData.role.slice(1) :
+                    'User';
+                userRoleElement.textContent = role;
+            }
+        }
+
+        // Call updateUserProfile immediately when the script loads
+        updateUserProfile();
+
+        // Also call it when the DOM is fully loaded
+        document.addEventListener('DOMContentLoaded', updateUserProfile);
     </script>
 </head>
 <body>
     <div class="dashboard-wrapper">
-        <nav class="sidebar" aria-label="Main Navigation">
-            <div class="sidebar-header">
-                <img src="images1/logo.png" alt="Metabrain Logo" class="sidebar-logo" />
-                <span class="sidebar-title"></span>
-            </div>
-            
+        <nav class="sidebar" id="sidebar">
             <div>
-      <div class="logo">
-        <a href="#" id="logoHomeBtn">
-          
-          <svg width="38" height="38" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" class="logo-img closed-logo" style="display: none;">
-            <path d="M19.9999 18.3334L3.33325 0H9.99992L23.3333 18.3334H19.9999ZM19.9999 18.3334L36.6666 0H29.9999L6.66659 39.1667H13.3333L22.4999 22.5L29.9999 39.1667H36.6666L19.9999 18.3334Z" fill="#0066B3"/>
-          </svg>
-        </a>
-      </div>
-      <nav class="nav-menu">
+                <div class="logo">
+                    <a href="#" id="logoHomeBtn">
+                        <img src="images1/logo.png" alt="MetaBrain" class="logo-img full-logo">
+                        <svg width="38" height="38" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" class="logo-img closed-logo" style="display: none;">
+                            <path d="M19.9999 18.3334L3.33325 0H9.99992L23.3333 18.3334H19.9999ZM19.9999 18.3334L36.6666 0H29.9999L6.66659 39.1667H13.3333L22.4999 22.5L29.9999 39.1667H36.6666L19.9999 18.3334Z" fill="#0066B3"/>
+                        </svg>
+                    </a>
+                </div>
+                <nav class="nav-menu">
                     <a href="main.html" class="nav-item" id="actionTwinNav">
                         <span class="icon">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="#7A8CA6" xmlns="http://www.w3.org/2000/svg">
@@ -71,12 +121,12 @@
                         <span>Project</span>
                     </a>
                 </nav>
-    </div>
-            <div class="sidebar-user-info">
-                <div class="user-initials">JD</div>
-                <div class="user-details">
-                    <div class="user-name">John Deo</div>
-                    <div class="user-role">Executive Leadership</div>
+            </div>
+            <div class="user-profile" style="display: none;">
+                <div class="profile-img"></div>
+                <div class="profile-info">
+                    <div class="profile-name"></div>
+                    <div class="profile-role"></div>
                 </div>
             </div>
         </nav>
@@ -367,6 +417,8 @@
     <script src="charts1.js"></script>
     <script src="chart.js"></script>
     <script src="script1.js"></script>
+    <!-- Add html2pdf library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script>
     window.addEventListener('DOMContentLoaded', () => {
       if (window.DashboardGraphs && window.DashboardGraphs.initializeCharts) {
@@ -415,6 +467,506 @@
             });
         }
     });
+
+    // Update sidebar toggle functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.querySelector('.main-content');
+        const fullLogo = document.querySelector('.full-logo');
+        const closedLogo = document.querySelector('.closed-logo');
+        const navItems = document.querySelectorAll('.nav-item');
+
+        if (sidebarToggle && sidebar && mainContent) {
+            sidebarToggle.addEventListener('click', function() {
+                // Toggle sidebar classes without affecting menu icon appearance
+                sidebar.classList.toggle('closed');
+                mainContent.classList.toggle('sidebar-closed');
+                
+                // Handle logo visibility
+                if (sidebar.classList.contains('closed')) {
+                    if (fullLogo) fullLogo.style.display = 'none';
+                    if (closedLogo) closedLogo.style.display = 'block';
+                } else {
+                    if (fullLogo) fullLogo.style.display = 'block';
+                    if (closedLogo) closedLogo.style.display = 'none';
+                }
+
+                // Toggle nav items text
+                navItems.forEach(item => {
+                    const textSpan = item.querySelector('span:last-child');
+                    if (textSpan) {
+                        textSpan.style.display = sidebar.classList.contains('closed') ? 'none' : 'inline';
+                    }
+                });
+
+                // Update sidebar width and main content margin
+                if (sidebar.classList.contains('closed')) {
+                    sidebar.style.width = '70px';
+                    mainContent.style.marginLeft = '70px';
+                    mainContent.style.width = 'calc(100% - 70px)';
+                } else {
+                    sidebar.style.width = '270px';
+                    mainContent.style.marginLeft = '270px';
+                    mainContent.style.width = 'calc(100% - 270px)';
+                }
+
+                // Update user profile
+                const userProfile = document.querySelector('.user-profile');
+                if (userProfile) {
+                    if (sidebar.classList.contains('closed')) {
+                        userProfile.style.width = '70px';
+                        userProfile.style.padding = '16px 13px';
+                        userProfile.style.justifyContent = 'center';
+                        const profileInfo = userProfile.querySelector('.profile-info');
+                        if (profileInfo) profileInfo.style.display = 'none';
+                        const profileImg = userProfile.querySelector('.profile-img');
+                        if (profileImg) {
+                            profileImg.style.width = '36px';
+                            profileImg.style.height = '36px';
+                            profileImg.style.fontSize = '14px';
+                        }
+                    } else {
+                        userProfile.style.width = '270px';
+                        userProfile.style.padding = '16px 32px';
+                        userProfile.style.justifyContent = 'flex-start';
+                        const profileInfo = userProfile.querySelector('.profile-info');
+                        if (profileInfo) profileInfo.style.display = 'flex';
+                        const profileImg = userProfile.querySelector('.profile-img');
+                        if (profileImg) {
+                            profileImg.style.width = '44px';
+                            profileImg.style.height = '44px';
+                            profileImg.style.fontSize = '18px';
+                        }
+                    }
+                }
+            });
+        }
+    });
+
+    // Add download report functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const downloadButton = document.querySelector('.download-report');
+        if (downloadButton) {
+            downloadButton.addEventListener('click', async function() {
+                // Show loading state
+                downloadButton.textContent = 'Generating PDF...';
+                downloadButton.disabled = true;
+
+                try {
+                    // Get the main content to be converted
+                    const element = document.querySelector('.main-content');
+                    
+                    // Configure PDF options
+                    const opt = {
+                        margin: [10, 10],
+                        filename: 'MetaBrain_Report.pdf',
+                        image: { type: 'jpeg', quality: 0.98 },
+                        html2canvas: { 
+                            scale: 2,
+                            useCORS: true,
+                            logging: true
+                        },
+                        jsPDF: { 
+                            unit: 'mm', 
+                            format: 'a4', 
+                            orientation: 'portrait' 
+                        },
+                        pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+                    };
+
+                    // Generate PDF
+                    await html2pdf().set(opt).from(element).save();
+                    
+                    // Reset button state
+                    downloadButton.textContent = 'Download Report';
+                    downloadButton.disabled = false;
+                } catch (error) {
+                    console.error('Error generating PDF:', error);
+                    downloadButton.textContent = 'Download Failed - Try Again';
+                    downloadButton.disabled = false;
+                    
+                    // Reset button after 3 seconds
+                    setTimeout(() => {
+                        downloadButton.textContent = 'Download Report';
+                    }, 3000);
+                }
+            });
+        }
+    });
     </script>
+    <style>
+        /* Update sidebar styles */
+        .sidebar {
+            width: 270px;
+            background: linear-gradient(135deg, #F8FAFF 0%, #EAF3FF 100%);
+            box-shadow: 2px 0 16px 0 rgba(0, 102, 179, 0.04);
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            transition: width 0.3s ease;
+            overflow: hidden;
+        }
+
+        .sidebar.closed {
+            width: 70px !important;
+        }
+
+        .sidebar.closed .logo,
+        .sidebar.closed .full-logo,
+        .sidebar.closed .closed-logo,
+        .sidebar.closed .logo-img {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+        }
+
+        .sidebar.closed .nav-item {
+            padding: 12px 23px;
+            justify-content: center;
+        }
+
+        .sidebar.closed .nav-item span:last-child {
+            display: none;
+        }
+
+        .sidebar.closed .user-profile {
+            width: 70px;
+            padding: 16px 13px;
+            justify-content: center;
+        }
+
+        .sidebar.closed .profile-info {
+            display: none;
+        }
+
+        .sidebar.closed .profile-img {
+            width: 36px;
+            height: 36px;
+            font-size: 14px;
+        }
+
+        .main-content {
+            margin-left: 270px;
+            width: calc(100% - 270px);
+            transition: margin-left 0.3s ease, width 0.3s ease;
+        }
+
+        .main-content.sidebar-closed {
+            margin-left: 70px !important;
+            width: calc(100% - 70px) !important;
+        }
+
+        .sidebar-toggle {
+            background: #fff;
+            border: 1.2px solid #d1d5db;
+            border-radius: 9px;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            margin-right: 16px;
+            position: relative;
+            z-index: 1100;
+            box-shadow: 0 2px 8px 0 rgba(0,0,0,0.04);
+            transition: none; /* Remove transition to prevent style changes */
+        }
+
+        .sidebar-toggle svg {
+            width: 24px;
+            height: 24px;
+            transition: none; /* Remove transition to prevent style changes */
+        }
+
+        .sidebar-toggle svg rect {
+            fill: #1A2340;
+            transition: none; /* Remove transition to prevent style changes */
+        }
+
+        /* Keep the menu icon appearance consistent */
+        .sidebar-toggle svg rect:nth-child(1) {
+            x: 4;
+            y: 5;
+            width: 16;
+            height: 2;
+            rx: 1;
+        }
+
+        .sidebar-toggle svg rect:nth-child(2) {
+            x: 4;
+            y: 11;
+            width: 16;
+            height: 2;
+            rx: 1;
+        }
+
+        .sidebar-toggle svg rect:nth-child(3) {
+            x: 4;
+            y: 17;
+            width: 16;
+            height: 2;
+            rx: 1;
+        }
+
+        /* Remove any style changes on open state */
+        .sidebar-toggle.open svg rect:nth-child(1),
+        .sidebar-toggle.open svg rect:nth-child(2),
+        .sidebar-toggle.open svg rect:nth-child(3) {
+            transform: none;
+            opacity: 1;
+        }
+
+        /* Keep hover and active states subtle */
+        .sidebar-toggle:hover {
+            background: #f8fafc;
+        }
+
+        .sidebar-toggle:active {
+            background: #f1f5f9;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 32px;
+            background: white;
+            border-top: 1px solid #EAF3FF;
+            height: 76px;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 270px;
+            z-index: 3;
+            box-shadow: 0 -4px 12px rgba(0, 102, 179, 0.03);
+            transition: all 0.3s ease;
+        }
+
+        .profile-img {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0096D6 0%, #0066B3 100%);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 18px;
+            box-shadow: 0 2px 8px rgba(0, 102, 179, 0.15);
+            transition: all 0.3s ease;
+        }
+
+        .profile-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .profile-name {
+            font-weight: 600;
+            color: #1A2340;
+            font-size: 15px;
+            line-height: 1.3;
+        }
+
+        .profile-role {
+            font-size: 13px;
+            color: #7A8CA6;
+            line-height: 1.2;
+        }
+
+        /* Update logo styles */
+        .logo {
+            padding: 32px 0 24px 32px;
+            height: 94px;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo a {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        .logo-img {
+            height: 38px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .full-logo {
+            display: block;
+        }
+
+        .closed-logo {
+            display: none;
+        }
+
+        /* Update sidebar closed state logo styles */
+        .sidebar.closed .logo {
+            padding: 32px 0 24px 16px;
+            justify-content: center;
+        }
+
+        .sidebar.closed .full-logo {
+            display: none;
+        }
+
+        .sidebar.closed .closed-logo {
+            display: block;
+        }
+
+        /* Precise chart container and graph styles */
+        .summary-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--card-radius);
+            box-shadow: var(--card-shadow);
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            height: 100%;
+            position: relative;
+        }
+
+        .summary-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            padding: 0;
+        }
+
+        .summary-card h2 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--gray-700);
+            margin: 0;
+        }
+
+        .summary-score {
+            font-size: 1.75rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        /* Chart container specific styles */
+        .summary-card .chart {
+            width: 100%;
+            height: 90px;
+            min-height: 90px;
+            max-height: 90px;
+            margin: 0;
+            padding: 0;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        /* Ensure the chart canvas fits perfectly */
+        .summary-card .chart canvas {
+            width: 100% !important;
+            height: 100% !important;
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        /* Gauge labels positioning */
+        .gauge-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            margin-top: 0.5rem;
+            padding: 0;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+        }
+
+        .gauge-labels span {
+            flex: 1;
+            text-align: center;
+        }
+
+        /* Summary assets positioning */
+        .summary-assets {
+            font-size: 0.85rem;
+            color: var(--gray-500);
+            margin-top: 1.5rem;
+            text-align: left;
+            padding: 0;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .summary-card .chart {
+                height: 80px;
+                min-height: 80px;
+                max-height: 80px;
+            }
+        }
+
+        /* Ensure proper spacing in the card */
+        #risk-card .chart,
+        #quality-card .chart {
+            margin: 0.5rem 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Adjust the chart container to prevent overflow */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Add styles for download button states */
+        .download-report {
+            transition: all 0.3s ease;
+        }
+
+        .download-report:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            background-color: var(--gray-300);
+        }
+
+        /* Ensure charts are properly rendered in PDF */
+        @media print {
+            .chart canvas {
+                max-width: 100% !important;
+                height: auto !important;
+            }
+            
+            .summary-card {
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+            
+            .chart-card {
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+        }
+    </style>
 </body>
 </html> 
