@@ -53,17 +53,89 @@ body {
   overflow: hidden; /* Hide any overflow outside the main flex children */
 }
 
-/* image-56 styles*/
-.image-56{
-  width: 100px;
-  display:center;
-  margin-left: 110px;
-  padding-bottom:30px;
+.radarchart{
+  margin-top:-40px;
 }
+#riskChartContainer {
+      display: flex;
+      justify-content: space-between;
+      max-width: 5000px;
+      margin: auto;
+       width: 40px;
+      font-size: 14px;
+      font-weight: bold;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+      flex: 1;
+      height: 10px;
+      background-color: #ffffff;
+      border-radius: 5px;
+      overflow: hidden;
+      margin: 0 10px;
+       height: 100%;
+      border-radius: 5px;
+    .orange { background-color: #fa8c16; }
+    .red { background-color: #f5222d; }
+    .yellow { background-color: #fadb14; }
+    .green { background-color: #52c41a; }
+    }
+
+    .column {
+      width: 48%;
+    }
+
+    .bar-group {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .label {
+      width: 120px;
+      font-size: 14px;
+      color: #444;
+    }
+
+    .bar {
+      flex: 1;
+      height: 10px;
+      background-color: #e3e7eb;
+      border-radius: 5px;
+      overflow: hidden;
+      margin: 0 10px;
+    }
+
+    .fill {
+      height: 100%;
+      border-radius: 5px;
+    }
+
+    .orange { background-color: #fa8c16; }
+    .red { background-color: #f5222d; }
+    .yellow { background-color: #fadb14; }
+    .green { background-color: #52c41a; }
+
+    .percent {
+      width: 40px;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+
+/* chart-56 styles*/
+  .chart {
+      width:100px;
+    }
+
+    .chart2{
+      width:auto;
+    }
 
 /* image-80 styles*/
 .image-80{
-  width: 300px;
+  width: 0px;
   display:center;
   margin-left: 20px;
   padding-bottom:30px;
@@ -357,7 +429,7 @@ body {
   display: flex;
   justify-content: space-between;
   font-size: 0.85rem;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0rem;
   padding: 0 0.5rem;
 }
 .gauge-labels .low { color: var(--success); }
@@ -422,6 +494,9 @@ body {
   grid-template-columns: repeat(auto-fit, minmax(300px, 2fr)); /* Responsive grid for charts */
   gap: 2rem;
   margin-bottom: 2rem;
+}
+.chart2{
+  margin-top:10px;
 }
 
 .chart-card {
@@ -807,9 +882,9 @@ tr:hover {
 }
 
 .recommendation-reconsider {
-    background-color: #fef2f2; /* Light red background */
-    color: #dc2626; /* Dark red text */
-    border: 1px solid #fecaca; /* Light red border */
+    background-color: #f2fef3; /* Light red background */
+    color: #35aa07; /* Dark red text */
+    border: 1px solid #cafed2; /* Light red border */
 }
 
 .recommendation-consider-switching {
