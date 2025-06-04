@@ -119,22 +119,22 @@ function initializeSummaryCards() {
             { value: 100 - score, fill: 'var(--color-gray-100)' }
         ];
 
-        gaugeChart.render(
-            <Recharts.Pie
-                data={gaugeData}
-                cx={60}
-                cy={60}
-                innerRadius={45}
-                outerRadius={55}
-                startAngle={90}
-                endAngle={-270}
-                paddingAngle={0}
-                dataKey="value"
-            >
-                <Recharts.Cell fill={color} />
-                <Recharts.Cell fill="var(--color-gray-100)" />
-            </Recharts.Pie>
-        );
+        const pie = Recharts.createElement(Recharts.Pie, {
+            data: gaugeData,
+            cx: 60,
+            cy: 60,
+            innerRadius: 45,
+            outerRadius: 55,
+            startAngle: 90,
+            endAngle: -270,
+            paddingAngle: 0,
+            dataKey: "value"
+        }, [
+            Recharts.createElement(Recharts.Cell, { fill: color }),
+            Recharts.createElement(Recharts.Cell, { fill: "var(--color-gray-100)" })
+        ]);
+
+        gaugeChart.render(pie);
 
         // Add score text
         const scoreText = document.createElement('div');
@@ -154,9 +154,61 @@ function addEventListeners() {
     // Download button
     const downloadBtn = document.querySelector('.btn-green');
     if (downloadBtn) {
-        downloadBtn.addEventListener('click', () => {
-            // Implement download functionality
-            console.log('Downloading report...');
+        downloadBtn.addEventListener('click', async () => {
+            try {
+                // Show loading state
+                downloadBtn.disabled = true;
+                downloadBtn.innerHTML = '<span class="loading">Generating PDF...</span>';
+
+                // Create PDF document
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                const pageWidth = pdf.internal.pageSize.getWidth();
+                const pageHeight = pdf.internal.pageSize.getHeight();
+                const margin = 10;
+
+                // Get the main content
+                const mainContent = document.querySelector('.main-content');
+                if (!mainContent) {
+                    throw new Error('Main content not found');
+                }
+
+                // Capture the entire content
+                const canvas = await html2canvas(mainContent, {
+                    scale: 2,
+                    useCORS: true,
+                    logging: false,
+                    allowTaint: true
+                });
+
+                // Calculate dimensions to fit the page
+                const imgWidth = pageWidth - (margin * 2);
+                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                
+                // Add the image to PDF
+                pdf.addImage(canvas.toDataURL('image/jpeg', 1.0), 'JPEG', margin, margin, imgWidth, imgHeight);
+
+                // Add header
+                pdf.setFontSize(20);
+                pdf.text('Metabrain Report', pageWidth / 2, margin, { align: 'center' });
+
+                // Add footer with date
+                const today = new Date();
+                const dateStr = today.toLocaleDateString();
+                pdf.setFontSize(10);
+                pdf.text(`Generated on: ${dateStr}`, pageWidth / 2, pageHeight - margin, { align: 'center' });
+
+                // Save the PDF
+                pdf.save('metabrain-report.pdf');
+
+                // Reset button state
+                downloadBtn.disabled = false;
+                downloadBtn.innerHTML = 'Download Report';
+            } catch (error) {
+                console.error('Error generating PDF:', error);
+                alert('Failed to generate PDF. Please try again.');
+                downloadBtn.disabled = false;
+                downloadBtn.innerHTML = 'Download Report';
+            }
         });
     }
 
@@ -191,8 +243,6 @@ function addEventListeners() {
         });
     });
 }
-
-
 
 // Utility functions
 function formatCurrency(value) {
