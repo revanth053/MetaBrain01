@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>MetaBrain Chat</title>
+  <title>Metabrain chat</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="main.css">
   <!-- Add Recharts library -->
@@ -85,7 +85,13 @@
           <rect x="4" y="17" width="16" height="2" rx="1"/>
         </svg>
       </button>
-      <span class="chat-title-text" id="currentChatTitle"></span>
+      <div class="toggle">
+        <span class="toggle-text">Ideation Studio</span>
+        <label class="toggle-switch">
+          <input type="checkbox" id="ideationToggle">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
       <button class="new-chat-btn">
         <svg width="18" height="18" fill="none" stroke="white" stroke-width="2">
           <line x1="9" y1="4" x2="9" y2="14"/>
@@ -97,12 +103,12 @@
     <div class="container">
 
       <div class="questions-grid">
-        <div class="question-card"><p>Are there potential M&A opportunities aligned with our growth?</p></div>
-        <div class="question-card"><p>How do we compare with competitors in the motorcycle market?</p></div>
-        <div class="question-card"><p>How can we optimise our product offerings based on customer data?</p></div>
-        <div class="question-card"><p>What are the latest consumer behaviour trends in automotive?</p></div>
-        <div class="question-card"><p>How can we enhance customer engagement through personalised marketing?</p></div>
-        <div class="question-card"><p>What steps should we take to meet new environmental regulations?</p></div>
+        <div class="question-card"><p>Simulate a scenario where U.S. tariffs on Mexican and Canadian automotive imports remain active for six months. Analyze alternative sourcing for airbags based on the following quantitative metrics: updated landed cost (factoring tariff rate, FX adjustment), supplier risk (political instability, non-tariff barriers), and supplier viability (capacity, delivery history). Recommend a prescriptive sourcing decision with an explanatory rationale</p></div>
+        <div class="question-card"><p>What patterns in EV adoption can inform prctive demand forecasting and inventory optimization?</p></div>
+        <div class="question-card"><p>Which emerging autonomous vehicle technology could signinficantly disrupt our current bussiness model?</p></div>
+        <div class="question-card"><p>How can AI-driven insights enhance the efficiency and accuracy of our autonomous vehicle testing process?</p></div>
+        <div class="question-card"><p>What digital retail innovations could most effectively differentiate our brand in a competitive automotive market?</p></div>
+        <div class="question-card"><p>Can we compare the total cost of the airbags coponent for different models with the potential revenue streams?</p></div>
       </div>
       <!-- Update the chat-section styling -->
       <div class="chat-section">
@@ -403,7 +409,7 @@
         const text = this.innerText.trim();
         
         // Reset chat header and current chat ID when switching pages
-        document.getElementById('currentChatTitle').textContent = 'MetaBrain Chat';
+        document.getElementById('currentChatTitle').textContent = 'Ideation Studio';
         currentChatId = null;
         
         if (text === 'Action Twin') {
@@ -1087,7 +1093,7 @@
             chatInput.value = '';
             
             // Reset chat header
-            document.getElementById('currentChatTitle').textContent = 'MetaBrain Chat';
+            document.getElementById('currentChatTitle').textContent = 'Ideation Studio';
             
             // Show questions grid and chat section
             document.querySelector('.questions-grid').style.display = 'grid';
@@ -1739,7 +1745,7 @@
                         if (currentChatId === chat.id) {
                             currentChatId = null;
                             chatMessages.innerHTML = '';
-                            document.getElementById('currentChatTitle').textContent = 'MetaBrain Chat';
+                            document.getElementById('currentChatTitle').textContent = 'Ideation Studio';
                             
                             // Reset UI to default home page state
                             document.querySelector('.container').style.display = '';
@@ -1776,7 +1782,7 @@
         document.querySelector('.chat-section').style.display = 'flex';
         chatMessages.innerHTML = '';
         currentChatId = null;
-        document.getElementById('currentChatTitle').textContent = 'MetaBrain Chat';
+        document.getElementById('currentChatTitle').textContent = 'Ideation Studio';
         
       } catch (error) {
         console.error('Error loading chats:', error);
@@ -1786,12 +1792,74 @@
     // Load chats when page loads
     document.addEventListener('DOMContentLoaded', () => {
       loadUserChats();
+
+      // Add ideation toggle functionality
+      const ideationToggle = document.getElementById('ideationToggle');
+      if (ideationToggle) {
+        ideationToggle.addEventListener('change', () => {
+          const questionsGrid = document.querySelector('.questions-grid');
+          const chatSection = document.querySelector('.chat-section');
+          
+          if (ideationToggle.checked) {
+            questionsGrid.style.display = 'none';
+            chatSection.style.display = 'flex';
+          } else {
+            questionsGrid.style.display = 'grid';
+            chatSection.style.display = 'flex';
+          }
+        });
+      }
+
+      // Add chat toggle switch functionality
+      const chatToggle = document.getElementById('chatToggle');
+      if (chatToggle) {
+        chatToggle.addEventListener('change', () => {
+          const chatSection = document.querySelector('.chat-section');
+          if (chatToggle.checked) {
+            chatSection.style.display = 'flex';
+            document.querySelector('.questions-grid').style.display = 'none';
+          } else {
+            chatSection.style.display = 'none';
+            document.querySelector('.questions-grid').style.display = 'grid';
+          }
+        });
+      }
     });
 
     // Sidebar toggle functionality with animated icon
     import { handleFileUpload } from './upload.js';
 
     document.addEventListener('DOMContentLoaded', () => {
+      // Add click handler for logo
+      const logoHomeBtn = document.getElementById('logoHomeBtn');
+      if (logoHomeBtn) {
+        logoHomeBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          // Reset chat state
+          currentChatId = null;
+          chatMessages.innerHTML = '';
+          chatInput.value = '';
+          
+          // Reset chat header
+          document.getElementById('currentChatTitle').textContent = 'Ideation Studio';
+          
+          // Show chat section and hide questions grid
+          document.querySelector('.questions-grid').style.display = 'none';
+          document.querySelector('.chat-section').style.display = 'flex';
+          
+          // Hide any other sections
+          document.getElementById('savedReportsSection')?.remove();
+          document.getElementById('projectSection')?.remove();
+          document.getElementById('actionTwinSection')?.remove();
+          
+          // Show main container
+          document.querySelector('.container').style.display = '';
+
+          // Focus on chat input
+          chatInput.focus();
+        });
+      }
+
       // Add click handlers to question cards
       const questionCards = document.querySelectorAll('.question-card');
       questionCards.forEach(card => {

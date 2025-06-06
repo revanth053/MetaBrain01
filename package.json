@@ -1,7 +1,7 @@
 {
   "name": "metabrain",
   "version": "1.0.0",
-  "description": "MetaBrain Chat Application",
+  "description": "Ideation Studio Application",
   "main": "index.html",
   "scripts": {
     "start": "vite",
