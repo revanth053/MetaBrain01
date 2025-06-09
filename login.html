@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MetaBrain Login</title>
     <link rel="stylesheet" href="login.css">
+    <!--clerk js sdk script-->
+    <script src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js"></script>
 </head>
 <body>
     <!-- Navigation Bar -->
@@ -84,6 +86,7 @@
     </section>
 
     <!-- Existing login content - initially hidden -->
+    <div id="clerk-widget-container"></div> <!-- Clerk will mount here -->
     <div class="login-container" id="loginContent">
         <!-- Left Section -->
         <div class="login-form-section">
@@ -120,6 +123,8 @@
                     <button type="submit" class="sign-in-btn">Sign in</button>
                 </form>
                 
+
+                
                 <p class="signup-prompt">
                     Not a member yet? <a href="signup.html" class="sign-up-link">Sign Up</a>
                 </p>
@@ -144,6 +149,9 @@
             </div>
         </div>
     </div>
+
+    
+
 
     <script type="module">
         import { getUserByEmail } from './userApi.js';
@@ -306,6 +314,49 @@
             document.getElementById('contactSalesModal').style.display = 'none';
             // You would typically collect form data and send it to your backend here
         });
+
+
+        //clerk code
+        document.addEventListener("DOMContentLoaded", async () => {
+    try {
+      await Clerk.load({
+        frontendApi: "pk_test_Y29zbWljLWNoaWNrZW4tNzMuY2xlcmsuYWNjb3VudHMuZGV2JA" // ✅ Wrap in quotes!
+      });
+
+      const clerk = Clerk._client;
+
+      // Log Clerk is ready
+      console.log("Clerk SDK loaded");
+
+      if (!clerk.user) {
+        console.log("No user logged in");
+
+        // Mount Clerk widget
+        const signIn = new Clerk.SignIn({
+          container: "#clerk-widget-container",
+          appearance: {
+            elements: {
+              formButtonPrimary: "sign-in-btn", // style to match your custom button
+            }
+          }
+        });
+        signIn.mount();
+      } else {
+        const container = document.getElementById("clerk-widget-container");
+        container.innerHTML = `
+          <p>Welcome, ${clerk.user.firstName || clerk.user.email}</p>
+          <button id="signOutBtn">Sign Out</button>
+        `;
+        document.getElementById("signOutBtn").addEventListener("click", () => {
+          clerk.signOut();
+          window.location.reload();
+        });
+      }
+
+    } catch (error) {
+      console.error("❌ Clerk load error:", error);
+    }
+  });
 
         // Add event listener for clicking the logo or welcome text in the navbar
         const navLogo = document.querySelector('.nav-logo');

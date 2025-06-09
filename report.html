@@ -142,14 +142,9 @@
                         <span class="chat-title-text" id="currentChatTitle">Saved Reports</span>
                     </div>
             <div class="button-container">
-                <a
-                href="https://hrmsbucket.eficensittest.com/20250419T060825612Z.pdf"
-                download
-              >
-                <Button class="btn new-report">
+                <button class="btn new-report" id="downloadReportBtn">
                    Download Report
-                </Button>
-              </a>
+                </button>
                 <button class="btn new-report" id="newReportBtn">New Report</button>
             </div>
             <svg class="line" width="18" height="18" fill="none" stroke="white" stroke-width="2">
@@ -424,8 +419,11 @@
     <script src="charts1.js"></script>
     <script src="chart.js"></script>
     <script src="script1.js"></script>
-    <!-- Add html2pdf library -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <!-- Load html2pdf.js -->
+<!-- Required libraries -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
     <script>
     window.addEventListener('DOMContentLoaded', () => {
       if (window.DashboardGraphs && window.DashboardGraphs.initializeCharts) {
@@ -552,55 +550,64 @@
     });
 
     // Add download report functionality
-    document.addEventListener('DOMContentLoaded', function() {
-        const downloadButton = document.querySelector('.download-report');
-        if (downloadButton) {
-            downloadButton.addEventListener('click', async function() {
-                // Show loading state
-                downloadButton.textContent = 'Generating PDF...';
-                downloadButton.disabled = true;
+    document.addEventListener('DOMContentLoaded', () => {
+  const downloadButton = document.getElementById('downloadReportBtn');
+  if (!downloadButton) return;
 
-                try {
-                    // Get the main content to be converted
-                    const element = document.querySelector('.main-content');
-                    
-                    // Configure PDF options
-                    const opt = {
-                        margin: [10, 10],
-                        filename: 'MetaBrain_Report.pdf',
-                        image: { type: 'jpeg', quality: 0.98 },
-                        html2canvas: { 
-                            scale: 2,
-                            useCORS: true,
-                            logging: true
-                        },
-                        jsPDF: { 
-                            unit: 'mm', 
-                            format: 'a4', 
-                            orientation: 'portrait' 
-                        },
-                        pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
-                    };
+  downloadButton.addEventListener('click', async () => {
+    const originalText = downloadButton.textContent;
+    downloadButton.textContent = 'Generating PDF...';
+    downloadButton.disabled = true;
 
-                    // Generate PDF
-                    await html2pdf().set(opt).from(element).save();
-                    
-                    // Reset button state
-                    downloadButton.textContent = 'Download Report';
-                    downloadButton.disabled = false;
-                } catch (error) {
-                    console.error('Error generating PDF:', error);
-                    downloadButton.textContent = 'Download Failed - Try Again';
-                    downloadButton.disabled = false;
-                    
-                    // Reset button after 3 seconds
-                    setTimeout(() => {
-                        downloadButton.textContent = 'Download Report';
-                    }, 3000);
-                }
-            });
-        }
-    });
+    try {
+      const element = document.querySelector('.main-content');
+      if (!element) throw new Error('Main content not found');
+
+      // Scroll to top and wait
+      window.scrollTo(0, 0);
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      const canvas = await html2canvas(element, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff',
+        width: element.scrollWidth,
+        height: element.scrollHeight,
+        windowWidth: element.scrollWidth,
+        windowHeight: element.scrollHeight
+      });
+
+      const imageData = canvas.toDataURL('image/jpeg', 1.0);
+
+      const imgWidthPx = canvas.width;
+      const imgHeightPx = canvas.height;
+
+      // Convert pixels to mm for PDF
+      const pxPerMm = 3.779528; // 1 mm ≈ 3.78 px
+      const pdfWidth = imgWidthPx / pxPerMm;
+      const pdfHeight = imgHeightPx / pxPerMm;
+
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF('p', 'mm', [pdfWidth, pdfHeight]);
+
+      pdf.addImage(imageData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+      pdf.save('MetaBrain_Full_Report.pdf');
+
+    } catch (err) {
+      console.error('Error generating PDF:', err);
+      downloadButton.textContent = 'Download Failed';
+      setTimeout(() => {
+        downloadButton.textContent = originalText;
+        downloadButton.disabled = false;
+      }, 3000);
+      return;
+    }
+
+    downloadButton.textContent = originalText;
+    downloadButton.disabled = false;
+  });
+});
 
     // Add event listener for New Report button
     document.getElementById('newReportBtn').addEventListener('click', () => {
@@ -980,6 +987,97 @@
                 page-break-inside: avoid;
             }
         }
+
+        /* Add styles for PDF generation */
+        @media print {
+            .main-content {
+                background: white !important;
+                color: black !important;
+                padding: 20px !important;
+            }
+            
+            .report-card,
+            .chart-container,
+            .summary-card {
+                break-inside: avoid;
+                page-break-inside: avoid;
+                margin-bottom: 20px;
+                background: white !important;
+                border: 1px solid #E2E8F0 !important;
+                border-radius: 8px !important;
+                box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1) !important;
+            }
+            
+            /* Ensure all text and colors are preserved */
+            * {
+                color-adjust: exact !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            /* Preserve text styles */
+            .text-lg {
+                font-size: 1.125rem !important;
+                color: #1A2340 !important;
+            }
+            .text-sm {
+                font-size: 0.875rem !important;
+                color: #4B5563 !important;
+            }
+            .font-semibold {
+                font-weight: 600 !important;
+            }
+
+            /* Hide elements that shouldn't be in PDF */
+            .button-container,
+            .sidebar-toggle {
+                display: none !important;
+            }
+
+            /* Preserve card styles */
+            .report-card-header {
+                padding: 16px !important;
+                border-bottom: 1px solid #E2E8F0 !important;
+            }
+
+            .report-card-body {
+                padding: 16px !important;
+            }
+
+            .report-card-footer {
+                padding: 16px !important;
+                border-top: 1px solid #E2E8F0 !important;
+                display: flex !important;
+                justify-content: space-between !important;
+                align-items: center !important;
+            }
+
+            /* Preserve status badge styles */
+            .status-badge {
+                padding: 4px 8px !important;
+                border-radius: 9999px !important;
+                font-size: 0.75rem !important;
+                font-weight: 500 !important;
+            }
+
+            .status-badge.completed {
+                background-color: #DEF7EC !important;
+                color: #03543F !important;
+            }
+
+            .status-badge.in-progress {
+                background-color: #FEF3C7 !important;
+                color: #92400E !important;
+            }
+
+            .status-badge.pending {
+                background-color: #E5E7EB !important;
+                color: #374151 !important;
+            }
+        }
     </style>
+      <!-- Add this just before </body> -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+
 </body>
 </html> 
