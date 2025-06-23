@@ -1,0 +1,133 @@
+:root {
+    --primary-blue: #0066b2;
+    --button-blue: #2185d0;
+    --stroke-light: #C0DFF5;
+    --stroke-dark: #A3CBFF;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    background: linear-gradient(to bottom, var(--stroke-light) 30%, #ffffff 70%);
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow-x: hidden;
+}
+
+body::before {
+    content: '';
+    position: absolute;
+    top: -10%;
+    left: -10%;
+    right: -10%;
+    height: 45%;
+    background: linear-gradient(135deg, var(--stroke-dark), var(--stroke-light));
+    transform: skewY(-8deg);
+    transform-origin: top left;
+    z-index: 0;
+}
+
+.container {
+    width: 100%;
+    max-width: 600px;
+    padding: 20px;
+    position: relative;
+    z-index: 1;
+}
+
+.welcome-card {
+    background: white;
+    border-radius: 20px;
+    padding: 40px;
+    text-align: center;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+}
+
+.logo-container {
+    margin-bottom: 30px;
+}
+
+.metabrain-logo {
+    max-width: 250px;
+    height: auto;
+}
+
+.celebration-icon {
+    margin: 30px 0;
+}
+
+.party-icon {
+    width: 80px;
+    height: auto;
+}
+
+.welcome-text {
+    color: #333;
+    font-size: 24px;
+    margin: 20px 0;
+    font-weight: 600;
+}
+
+.description {
+    color: #666;
+    line-height: 1.6;
+    margin: 20px 0;
+    font-size: 15px;
+}
+
+.signup-button {
+    background-color: var(--button-blue);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 15px 40px;
+    font-size: 16px;
+    cursor: pointer;
+    width: 100%;
+    margin: 25px 0;
+    transition: background-color 0.3s;
+}
+
+.signup-button:hover {
+    background-color: #1a75b8;
+}
+
+.fallback-text {
+    color: #666;
+    font-size: 14px;
+    margin: 15px 0;
+}
+
+.fallback-link {
+    color: var(--button-blue);
+    text-decoration: none;
+}
+
+.fallback-link:hover {
+    text-decoration: underline;
+}
+
+.company-info {
+    text-align: center;
+    color: #666;
+    font-size: 14px;
+    line-height: 1.5;
+    margin-top: 20px;
+}
+
+.company-info p {
+    margin: 8px 0;
+}
+
+.copyright {
+    font-weight: 500;
+}
+
+.address, .contact {
+    color: #555;
+}

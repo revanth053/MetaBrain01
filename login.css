@@ -1,0 +1,911 @@
+:root {
+    --primary-blue: #0066b2;
+    --button-blue: #2185d0;
+    --stroke-light: #3795e8;
+    --stroke-dark: #A3CBFF;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    font-family: Arial, sans-serif;
+    background:   #f4f5f7 ;
+    padding-top: 61px;
+}
+
+.login-container {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: row-reverse;
+}
+
+/* Left Section Styles */
+.login-form-section {
+    flex: 1;
+    padding-right: 200px;
+    padding-top:40px;
+    display: flex;
+    flex-direction: column;
+    max-width: 400px;
+    justify-content: flex-start;
+    order: 2;
+}
+.lable{
+    font-size:13px;
+    font-weight:bold;
+    color:#575656;
+    margin-left:3px;
+    margin-bottom:6px;
+    display: block;
+}
+
+.logo-container {
+    margin-bottom: 30px;
+    margin-top: 40px;
+    order: 1; 
+}
+
+.logo {
+    max-width: 200px;
+    height: auto;
+    margin-top:-25px;
+    margin-left: -150px; 
+    display: flex;
+}
+
+.login-form {
+    flex: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    order: 2;
+    margin-top: 0;
+    width: 100%;
+    max-width: 400px;
+}
+
+.login-form h2 {
+    font-size: 22px;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.subtitle {
+    color: #666;
+    margin-bottom: 25px;
+    line-height: 1.4;
+    font-size: 13px;
+}
+
+.form-row {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.form-row .form-group {
+    flex: 1;
+    margin-bottom: 0;
+}
+
+.form-group {
+    margin-bottom: 20px;
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    box-sizing: border-box;
+    margin-top: 5px;
+    height: 40px;
+}
+
+.password-group {
+    position: relative;
+    width: 100%;
+}
+
+.password-group input {
+    width: 100%;
+    padding: 10px 35px 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    box-sizing: border-box;
+    margin-top: 10px;
+    height: 40px;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 8px;
+    top: 70%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 20px;
+    width: 20px;
+    z-index: 2;
+}
+
+.toggle-password img {
+    width: 18px;
+    height: 18px;
+    object-fit: contain;
+}
+
+.form-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    width: 100%;
+    font-size: 13px;
+}
+
+.remember-me {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #666;
+    font-size: 13px;
+}
+
+.forgot-password {
+    color: var(--button-blue);
+    text-decoration: none;
+    font-size: 13px;
+}
+
+.sign-in-btn {
+    background-color: var(--button-blue);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 12px;
+    font-size: 14px;
+    cursor: pointer;
+    width: 100%;
+    margin-bottom: 15px;
+    box-sizing: border-box;
+    height: 40px;
+}
+
+.signup-prompt {
+    text-align: center;
+    color: #666;
+    font-size: 13px;
+    margin-top: 10px;
+}
+
+.sign-up-link {
+    color: var(--button-blue);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 13px;
+}
+
+/* Right Section Styles */
+.welcome-section {
+    flex: 1;
+    background: rgb(96, 160, 250);
+    padding: 60px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    border-radius: 0px;
+    max-width: 40%;
+    order: 1;
+    justify-content: center;
+    align-items: center;
+}
+
+.welcome-section::before {
+    content: none;
+}
+
+.welcome-content {
+    position: relative;
+    z-index: 1;
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: center;
+    flex: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #333;
+    text-shadow: none;
+    margin-bottom: 40px;
+}
+
+.welcome-content h1 {
+    font-size: 32px;
+    color: #ffffff;
+    margin-top:-50px;
+}
+
+.welcome-content p {
+    color: #ffffff;
+    line-height: 1.6;
+    margin-top:-10px;
+    font-size: 16px;
+    font-weight:10px;
+}
+
+.analytics-preview {
+    margin-top: 0;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: 800px;
+}
+
+.main-dashboard {
+    border-radius: 20px;
+    padding: 30px;
+    width: 100%;
+    max-width: 800px;
+    position: relative;
+    background: rgba(255, 255, 255, 0.6);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* Floating elements around dashboard */
+.floating-chart {
+    position: absolute;
+    width: 120px;
+    height: auto;
+}
+
+.floating-chart.top-left {
+    top: -60px;
+    left: -60px;
+}
+
+.floating-chart.top-right {
+    top: -40px;
+    right: -60px;
+}
+
+.floating-chart.bottom-right {
+    bottom: 40px;
+    right: -70px;
+}
+
+/* Dashboard content */
+.dashboard-content {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 20px;
+}
+
+.graph-section {
+    grid-column: 1 / -1;
+    margin-bottom: 20px;
+    position: relative;
+    z-index: 2;
+}
+
+.robot-assistant {
+    position: absolute;
+    bottom: 20px;
+    right: 30px;
+    width: 120px;
+    height: auto;
+}
+
+.chart-section {
+    position: absolute;
+    top: 240px;
+    right: -80px;
+    width: 100px;
+    height: auto;
+    z-index: 2;
+}
+
+.chart-section img {
+    width: 100%;
+    height: auto;
+    max-height: 100px;
+    object-fit: contain;
+}
+
+.chart-section .chart1,
+.chart-section .chart3 {
+    width: 150px;
+    height: auto;
+}
+
+.progress-circle {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    width: 80px;
+    height: 80px;
+}
+
+.graph-section img,
+.chart-section img {
+    width: 100%;
+    height: auto;
+}
+
+.robot-section {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    width: 100px;
+}
+
+.robot-section img {
+    width: 100%;
+    height: auto;
+}
+
+.device-section {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 40px;
+}
+
+.progress-circle {
+    position: absolute;
+    top: -65px;
+    right: 500px;
+    width: 40px;
+    height: 40px;
+    z-index: 1;
+}
+
+.side-stats {
+    width: 120px;
+}
+
+.side-stats img {
+    width: 100%;
+    height: auto;
+}
+
+.copyright {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    color: #ffffff;
+    font-size: 14px;
+    margin-top: auto;
+    margin-bottom:-10px;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .login-container {
+        flex-direction: column;
+    }
+    
+    .login-form-section {
+        max-width: 100%;
+        padding: 20px;
+    }
+    
+    .welcome-section {
+        padding: 40px 20px;
+    }
+}
+
+/* Style for the main application preview image */
+.app-preview-image {
+    max-width: 500px; /* Ensure image is responsive */
+    height: 300px; /* Maintain aspect ratio */
+    display: block; /* Make it a block element to center */
+    margin: 30px auto 0 auto; /* Center the image and add top margin */
+    border-radius: 12px; /* Add border radius like in the image */
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15); /* Add shadow like in the image */
+    position: relative; /* Give it a z-index context */
+    z-index: 1;
+}
+
+.app-preview-image::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.3); /* Light black overlay */
+    border-radius: 12px; /* Match parent border radius */
+    z-index: 2; /* Above the image, below the overlay image */
+}
+
+
+.black-overlay {
+    margin-top:94px;
+    margin-left:50px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 500px;
+    height: 300px;
+    border-radius: 12px;
+    object-fit: cover;
+    background-color: rgba(0, 0, 0, 0.5); /* semi-transparent black */
+    z-index: 1;
+  }
+
+/* Style for the overlay image (home1.png) */
+.app-overlay-image {
+    position: absolute; /* Position relative to the nearest positioned ancestor (.welcome-content) */
+    top: 50%; /* Center vertically */
+    left: 50%; /* Center horizontally */
+    transform: translate(-50%, -50%); /* Adjust for the image's own size */
+    width: 150px; /* Adjust size as needed */
+    height: auto;
+    margin-top:40px;
+    z-index: 3; /* Ensure it appears above the main image and overlay */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Optional: Add a subtle shadow */
+    border-radius: 8px; /* Optional: Add slight border radius */
+}
+
+/* Styles for the Upgrade Experience section */
+.upgrade-experience-section {
+    background-color: #f5f6f8; /* Light gray background */
+    padding: 80px 20px; /* Adjust padding as needed */
+    text-align: center;
+    margin-top:-80px;
+}
+
+.upgrade-experience-section .container {
+    max-width: 800px; /* Limit content width */
+    margin: 0 auto;
+}
+
+.upgrade-experience-section h1 {
+    font-size: 50px; /* Large font size */
+    font-weight: 900; /* Bold */
+    color: #1a2340; /* Dark text color */
+    margin-bottom: 15px;
+}
+
+.upgrade-experience-section p {
+    font-size: 20px;
+    color: #5a6e7c; /* Gray text color */
+    margin-bottom: -50px;
+}
+
+/* Styles for the Ready to Get Started section */
+.ready-to-get-started-section {
+    margin-top:-50px;
+    background-color: #ffffff; /* White background */
+    padding: 60px 20px; /* Adjust padding */
+    display: flex; /* Use flexbox for layout */
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Add shadow */
+    margin: 40px auto; /* Add margin and center */
+    max-width: 1200px; /* Max width for the section */
+    border-radius: 8px; /* Rounded corners */
+    overflow: hidden; /* Ensure shadow is visible */
+}
+
+.ready-to-get-started-section .container {
+    display: flex; /* Use flexbox for content inside container */
+    align-items: center;
+    gap: 40px; /* Space between text and image */
+    max-width: 1160px; /* Adjust container max-width */
+}
+
+.ready-content {
+    flex: 1; /* Allow content to take available space */
+    max-width: 500px; /* Limit width of the text content */
+}
+
+.ready-content h2 {
+    font-size: 36px; /* Larger font size for headings */
+    font-weight: 700;
+    color: #1a2340; /* Dark text color */
+    margin-bottom: 10px;
+}
+
+.ready-content .talk-to-team {
+    color: #0066b3; /* Blue text color */
+}
+
+.ready-content p {
+    font-size: 16px;
+    color: #5a6e7c; /* Gray text color */
+    margin-bottom: 30px;
+    line-height: 1.5;
+}
+
+.contact-sales-btn {
+    display: inline-block; /* Make button block for padding */
+    background-color: #0066b3; /* Blue button color */
+    color: white;
+    padding: 12px 24px;
+    border-radius: 4px; /* Rounded corners */
+    text-decoration: none; /* Remove underline */
+    font-size: 16px;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+    border: none; /* Remove default button border */
+    cursor: pointer;
+}
+
+.contact-sales-btn:hover {
+    background-color: #005199; /* Darker blue on hover */
+}
+
+.action-twin-preview {
+    flex: 1; /* Allow preview to take available space */
+    min-width: 500px; /* Minimum width for the preview area */
+    height: 300px; /* Adjust height as needed */ /* Placeholder background */
+    /* You will need to add the image as a background image or <img> tag here */
+    /* Example using background image: */
+    /* background-image: url('path/to/your/action-twin-modal-image.png'); */
+    /* background-size: contain; */
+    /* background-repeat: no-repeat; */
+    /* background-position: center; */
+}
+
+/*Navbar section*/
+
+
+/* Hide the original login container initially */
+#loginContent {
+    display: none;
+}
+
+/* Add responsiveness */
+@media (max-width: 768px) {
+    .ready-to-get-started-section .container {
+        flex-direction: column; /* Stack items vertically on smaller screens */
+        text-align: center;
+    }
+
+    .ready-content {
+        max-width: 100%;
+    }
+
+    .action-twin-preview {
+        min-width: 100%;
+        height: 300px; /* Adjust height for smaller screens */
+    }
+}
+
+/* Styles for the top navigation bar */
+.top-nav {
+    width: 100%;
+    height:70px;
+    padding: 10px 20px; /* Adjust padding as needed */
+    background-color: #ffffff; /* White background */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    border-bottom: 1px solid #d1d5da; /* Added a bottom border */
+    display: flex;
+    justify-content: space-between; /* Space out logo and welcome text */
+    align-items: center;
+    position: fixed; /* Keep the nav bar at the top */
+    top: 0;
+    left: 0;
+    z-index: 100; /* Ensure it's above other content */
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+}
+
+.nav-logo img {
+    height: 30px; /* Adjust height as needed for your logo to be small and visible */
+    display: block;
+    margin-left:100px; /* Ensure image behaves as a block element */
+}
+
+.nav-welcome span {
+    font-size: 16px;
+    color: #1a2340; /* Dark text color */
+    font-weight: 600;
+}
+
+/* Media query for responsiveness */
+@media (max-width: 768px) {
+    .top-nav {
+        padding: 10px; /* Adjust padding for smaller screens */
+    }
+
+    .nav-logo img {
+        height: 30px; /* Adjust logo size for smaller screens */
+    }
+
+    .nav-welcome span {
+        font-size: 14px; /* Adjust font size for smaller screens */
+    }
+
+    body {
+        padding-top: 51px; /* Adjust body padding based on nav height for smaller screens */
+    }
+}
+
+/* Pricing page images*/
+.navbar-image{
+    width:500;
+    height:300px;
+    background: rgba(0, 0, 0, 0.3); /* Light black overlay */
+    border-radius: 12px; /* Match parent border radius */
+    z-index: 2;
+}
+.navbar-overlay{
+    margin-left:720px;
+    margin-top: 348px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 633px;
+    height: 300px;
+    border-radius: 12px;
+    object-fit: cover;
+    background-color: rgba(0, 0, 0, 0.5); /* semi-transparent black */
+    z-index: 1;
+}
+
+.navbar-image1{
+    position: absolute; /* Position relative to the nearest positioned ancestor (.welcome-content) */
+    top: 50%; /* Center vertically */
+    left: 50%; /* Center horizontally */
+    transform: translate(-50%, -50%); /* Adjust for the image's own size */
+    width: 200px; /* Adjust size as needed */
+    height: auto;
+    margin-top:130px;
+    margin-left:300px;
+    z-index: 3; /* Ensure it appears above the main image and overlay */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Optional: Add a subtle shadow */
+    border-radius: 8px; 
+}
+
+/* Styles for the Feature Boxes section */
+.feature-boxes-section {
+    padding: 40px 20px; /* Adjust padding as needed */
+    background-color: #f5f6f8; /* Match the upgrade section background */
+    text-align: center;
+}
+
+.feature-boxes-section .container {
+    display: flex; /* Use flexbox to arrange the boxes */
+    justify-content: center; /* Center the boxes horizontally */
+    gap: 20px; /* Space between the boxes */
+    max-width: 1200px; /* Match the ready-to-get-started section width */
+    margin: 0 auto;
+    flex-wrap: wrap; /* Allow boxes to wrap on smaller screens */
+}
+
+.feature-box {
+    flex: 1; /* Allow boxes to grow and shrink */
+    min-width: 250px; /* Minimum width for each box */
+    background-color: #ffffff; /* White background for boxes */
+    padding: 25px; /* Adjust padding inside the boxes */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    /* Updated styles for flexbox layout */
+    display: flex;
+    flex-direction: column; /* Stack children vertically */
+    align-items: flex-start; /* Align items to the start (left) */
+    text-align: left; /* Align text to the left */
+}
+
+.icon-and-heading {
+    display: flex;
+    align-items: center; /* Vertically align icon and heading */ /* Add space between icon/heading and paragraph */
+}
+
+.feature-box h3 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1a2340; /* Dark text color */
+    margin-top:15px; /* Remove bottom margin as spacing is on the container */
+    margin-left: 15px; /* Add space between icon and heading */
+}
+
+.feature-box p{
+    font-size: 16px;
+    color: #5a6e7c;
+}
+
+.pricing-icons{
+    /* Existing styles */
+    /* Removed margin-right as spacing is now handled by h3 margin-left */
+    flex-shrink: 0;
+    width:35px; /* Prevent icon from shrinking */
+}
+
+/* Media query for responsiveness */
+@media (max-width: 768px) {
+    .feature-boxes-section .container {
+        flex-direction: column; /* Stack boxes vertically on smaller screens */
+        align-items: center; /* Center items when stacked */
+    }
+
+    .feature-box {
+        width: 80%; /* Make boxes take up more width on smaller screens */
+        min-width: 0; /* Remove minimum width constraint */
+        /* flex-direction is already column, adjust alignment */
+        align-items: center; /* Center items when stacked */
+        text-align: center; /* Center text when stacked */
+    }
+
+    .icon-and-heading {
+         flex-direction: column; /* Stack icon and heading vertically on smaller screens */ /* Add space below when stacked */
+    }
+
+    .feature-box h3 {
+        margin-top: 5px; /* Add space above heading when stacked */ /* Remove left margin when stacked */
+    }
+
+    .pricing-icons {
+         /* Add bottom margin when stacked */
+    }
+}
+
+/* Styles for the Contact Sales Modal */
+#contactSalesModal.modal {
+    /* Basic modal overlay styles (should be similar to your existing modals) */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Dim background */
+    display: flex; /* Use flexbox for centering */
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    z-index: 150; /* Ensure it's above other content and the nav */
+}
+
+#contactSalesModal .modal-content {
+    background-color: #ffffff; /* White background */
+    padding: 30px; /* Adjust padding */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15); /* Prominent shadow */
+    max-width: 500px; /* Adjust max width as needed */
+    width: 90%; /* Responsive width */
+    position: relative; /* Needed for absolute positioning of close button if added */
+}
+
+#contactSalesModal .modal-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1a2340; /* Dark text */
+    margin-bottom: 10px;
+}
+
+#contactSalesModal .modal-subtitle {
+    font-size: 16px;
+    color: #5a6e7c; /* Gray text */
+    margin-bottom: 20px;
+    line-height: 1.4;
+}
+
+#contactSalesModal .form-group {
+    margin-bottom: 20px;
+}
+
+#contactSalesModal .form-input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #d1d5da; /* Light gray border */
+    border-radius: 4px;
+    font-size: 16px;
+    color: #1a2340;
+    box-sizing: border-box; /* Include padding and border in element's total width */
+    min-height: 120px; /* Adjust height for the textarea */
+    resize: vertical; /* Allow vertical resizing */
+}
+
+#contactSalesModal .form-input::placeholder {
+    color: #7a8ca6; /* Placeholder text color */
+}
+
+#contactSalesModal .upload-box {
+    border: 2px dashed #a3cbff; /* Dashed blue border */
+    border-radius: 4px;
+    padding: 20px;
+    text-align: center;
+    color: #0066b3; /* Blue text color */
+    font-size: 16px;
+    cursor: pointer;
+    margin-bottom: 30px;
+    transition: border-color 0.3s ease;
+}
+
+#contactSalesModal .upload-box:hover {
+    border-color: #005199; /* Darker blue on hover */
+}
+
+
+#contactSalesModal .button-group {
+    display: flex;
+    justify-content: flex-end; /* Align buttons to the right */
+    gap: 10px; /* Space between buttons */
+}
+
+#contactSalesModal .btn {
+     padding: 10px 20px;
+     border-radius: 4px;
+     cursor: pointer;
+     font-size: 16px;
+     font-weight: 500;
+     transition: background-color 0.3s ease;
+     border: none;
+}
+
+#contactSalesModal .btn-cancel {
+    background-color: #e0e0e0; /* Light gray background */
+    color: #1a2340; /* Dark text */
+}
+
+#contactSalesModal .btn-cancel:hover {
+    background-color: #d5d5d5; /* Darker gray on hover */
+}
+
+#contactSalesModal .btn-contact-sales {
+    background-color: #a3cbff; /* Light blue background */
+    color: #1a2340; /* Dark text */
+}
+
+#contactSalesModal .btn-contact-sales:hover {
+    background-color: #8ab9f5; /* Slightly darker blue on hover */
+}
+
+/* Add a close button if you want one (optional, as clicking outside or Cancel closes it) */
+/*
+#contactSalesModal .close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #aaa;
+    cursor: pointer;
+}
+
+#contactSalesModal .close:hover {
+    color: #777;
+}
+*/
+
+/* Media query for responsiveness */
+@media (max-width: 600px) {
+    #contactSalesModal .modal-content {
+        padding: 20px; /* Reduce padding on smaller screens */
+    }
+
+    #contactSalesModal .modal-title {
+        font-size: 20px; /* Adjust font size */
+    }
+
+    #contactSalesModal .modal-subtitle {
+        font-size: 14px; /* Adjust font size */
+    }
+
+    #contactSalesModal .button-group {
+        flex-direction: column; /* Stack buttons vertically */
+        gap: 10px;
+    }
+
+    #contactSalesModal .btn {
+        width: 100%; /* Make buttons full width */
+        text-align: center;
+    }
+}

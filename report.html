@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports</title>
+    <link rel="stylesheet" href="styles1.css">
+    <!-- Chart.js or Recharts CDN here if needed -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+     <script>
+        // Verify Chart.js is loaded
+        if (typeof Chart === 'undefined') {
+            console.error('Chart.js failed to load');
+            document.write('<div style="color: red; padding: 20px;">Error: Chart.js failed to load. Please check your internet connection and refresh the page.</div>');
+        }
+
+        // Function to update user profile information
+        function updateUserProfile() {
+            const userData = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user') || '{}');
+            const userProfileSection = document.querySelector('.user-profile');
+            
+            if (!userData.email) {
+                // If no user is logged in, hide the profile section
+                if (userProfileSection) {
+                    userProfileSection.style.display = 'none';
+                }
+                return;
+            }
+
+            // Show the profile section if it was hidden
+            if (userProfileSection) {
+                userProfileSection.style.display = 'flex';
+            }
+
+            // Get the display name from user data or use email username
+            const displayName = userData.name || userData.email.split('@')[0];
+            
+            // Update user name
+            const userNameElement = document.querySelector('.profile-name');
+            if (userNameElement) {
+                userNameElement.textContent = displayName;
+            }
+
+            // Update user initials
+            const initialsElement = document.querySelector('.profile-img');
+            if (initialsElement) {
+                const initials = displayName
+                    .split(/[\s@]/) // Split by space or @ symbol
+                    .map(n => n[0])
+                    .join('')
+                    .toUpperCase()
+                    .substring(0, 2);
+                initialsElement.textContent = initials;
+            }
+
+            // Update user role
+            const userRoleElement = document.querySelector('.profile-role');
+            if (userRoleElement) {
+                const role = userData.role ? 
+                    userData.role.charAt(0).toUpperCase() + userData.role.slice(1) :
+                    'User';
+                userRoleElement.textContent = role;
+            }
+        }
+
+        // Call updateUserProfile immediately when the script loads
+        updateUserProfile();
+
+        // Also call it when the DOM is fully loaded
+        document.addEventListener('DOMContentLoaded', updateUserProfile);
+    </script>
+</head>
+<body>
+    <div class="dashboard-wrapper">
+        <nav class="sidebar" id="sidebar">
+            <div>
+                <div class="logo">
+                    <a href="#" id="logoHomeBtn">
+                        <img src="images1/logo.png" alt="MetaBrain" class="logo-img full-logo">
+                        <svg width="38" height="38" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" class="logo-img closed-logo" style="display: none;">
+                            <path d="M19.9999 18.3334L3.33325 0H9.99992L23.3333 18.3334H19.9999ZM19.9999 18.3334L36.6666 0H29.9999L6.66659 39.1667H13.3333L22.4999 22.5L29.9999 39.1667H36.6666L19.9999 18.3334Z" fill="#0066B3"/>
+                        </svg>
+                    </a>
+                </div>
+                <nav class="nav-menu">
+                    <a href="main.html" class="nav-item" id="actionTwinNav">
+                        <span class="icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="#7A8CA6" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M0.5 4.63524V15.3651C0.501387 15.7662 0.613983 16.159 0.825267 16.4999C1.21885 17.1408 1.91638 17.532 2.66845 17.5336H15.8848C16.8792 17.5336 17.7462 16.8573 17.9882 15.8928L19.4338 10.9454C19.7263 9.78408 19.0219 8.60555 17.8605 8.31311C17.8191 8.30266 17.7773 8.29344 17.7352 8.28546V7.52651C17.7352 6.32891 16.7644 5.35806 15.5668 5.35806H10.6989C10.3608 5.36876 10.0605 5.14353 9.97611 4.81595L9.80263 4.09313C9.55782 3.14471 8.7076 2.47816 7.72815 2.4668H2.66845C1.47085 2.4668 0.5 3.43764 0.5 4.63524ZM1.94563 4.63524C1.94563 4.23604 2.26925 3.91243 2.66845 3.91243H7.72815C8.06626 3.90173 8.36657 4.12696 8.45097 4.45454L8.62444 5.17736C8.86926 6.12578 9.71948 6.79233 10.6989 6.80369H15.5668C15.966 6.80369 16.2896 7.12731 16.2896 7.52651V8.24932H5.15493C4.23026 8.24268 3.40311 8.82314 3.09491 9.69495L1.94563 13.1789L1.94563 4.63524Z" fill="#5A6E7C"/>
+                            </svg>
+                        </span>
+                        <span>Action Twin</span>
+                    </a>
+                    <a href="main.html" class="nav-item" id="talkAnalystNav">
+                        <span class="icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="#7A8CA6" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M14.5386 0.513184H5.46103C2.71672 0.513184 0.5 2.70342 0.5 5.42143V11.1741C0.5 13.3381 1.92488 15.1852 3.90401 15.8184C4.59007 16.0296 5.03862 16.663 5.03862 17.3753V18.9587C5.03862 19.381 5.54005 19.6447 5.88315 19.381L9.81507 16.399C10.1054 16.1879 10.4748 16.0559 10.8442 16.0559H14.5385C17.283 16.0826 19.5 13.8923 19.5 11.1745V5.42184C19.5 2.70383 17.2832 0.513593 14.539 0.513593L14.5386 0.513184ZM4.98603 10.013C4.19433 10.013 3.53462 9.35331 3.53462 8.56161C3.53462 7.76991 4.19433 7.1102 4.98603 7.1102C5.77773 7.1102 6.43744 7.76991 6.43744 8.56161C6.43726 9.35331 5.77754 10.013 4.98603 10.013ZM9.99984 10.013C9.20814 10.013 8.54842 9.35331 8.54842 8.56161C8.54842 7.76991 9.20814 7.1102 9.99984 7.1102C10.7915 7.1102 11.4512 7.76991 11.4512 8.56161C11.4512 9.35331 10.7915 10.013 9.99984 10.013ZM15.0136 10.013C14.2219 10.013 13.5622 9.35331 13.5622 8.56161C13.5622 7.76991 14.2219 7.1102 15.0136 7.1102C15.8053 7.1102 16.465 7.76991 16.465 8.56161C16.465 9.35331 15.8053 10.013 15.0136 10.013Z" fill="#5A6E7C"/>
+                            </svg>
+                        </span>
+                        <span>Talk with Analyst</span>
+                    </a>
+                    <a href="report.html" class="nav-item active" id="savedReportsNav">
+                        <span class="icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="#7A8CA6" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M0.5 4.63524V15.3651C0.501387 15.7662 0.613983 16.159 0.825267 16.4999C1.21885 17.1408 1.91638 17.532 2.66845 17.5336H15.8848C16.8792 17.5336 17.7462 16.8573 17.9882 15.8928L19.4338 10.9454C19.7263 9.78408 19.0219 8.60555 17.8605 8.31311C17.8191 8.30266 17.7773 8.29344 17.7352 8.28546V7.52651C17.7352 6.32891 16.7644 5.35806 15.5668 5.35806H10.6989C10.3608 5.36876 10.0605 5.14353 9.97611 4.81595L9.80263 4.09313C9.55782 3.14471 8.7076 2.47816 7.72815 2.4668H2.66845C1.47085 2.4668 0.5 3.43764 0.5 4.63524ZM1.94563 4.63524C1.94563 4.23604 2.26925 3.91243 2.66845 3.91243H7.72815C8.06626 3.90173 8.36657 4.12696 8.45097 4.45454L8.62444 5.17736C8.86926 6.12578 9.71948 6.79233 10.6989 6.80369H15.5668C15.966 6.80369 16.2896 7.12731 16.2896 7.52651V8.24932H5.15493C4.23026 8.24268 3.40311 8.82314 3.09491 9.69495L1.94563 13.1789L1.94563 4.63524Z" fill="#5A6E7C"/>
+                                
+                            </svg>
+                        </span>
+                        <span>Saved Reports</span>
+                    </a>
+                    <a href="main.html" class="nav-item" id="projectNav">
+                        <span class="icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="#7A8CA6" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M19.5 6.04056C19.5 6.45457 19.26 6.82857 18.89 7.00057L10.452 10.9626C10.31 11.0286 10.152 11.0626 9.998 11.0626C9.84399 11.0626 9.68999 11.0286 9.548 10.9626L1.11401 7.00057C0.73999 6.82857 0.5 6.45457 0.5 6.04056C0.5 5.62857 0.73999 5.25858 1.11401 5.08255L9.548 1.12056C9.83398 0.984552 10.166 0.984552 10.452 1.12056L18.89 5.08255C19.264 5.25858 19.5 5.63255 19.5 6.04056Z" fill="#5A6E7C"/>
+                                <path d="M1.11332 10.9621L9.54833 14.9232C9.68991 14.9892 9.84407 15.0238 9.99824 15.0238C10.1524 15.0238 10.3097 14.9892 10.4513 14.9232L18.8894 10.9621C19.4212 10.7135 19.6477 10.0811 19.396 9.54943C19.1506 9.02086 18.515 8.79119 17.9896 9.03974L9.99824 12.79L2.01314 9.04289C1.48143 8.79119 0.849039 9.02086 0.603634 9.55258C0.351937 10.0811 0.581611 10.7135 1.11332 10.9621Z" fill="#5A6E7C"/>
+                                <path d="M17.9865 13.0007L9.99824 16.751L2.01314 13.0007C1.48143 12.7522 0.849039 12.9787 0.603634 13.5104C0.351937 14.0421 0.581611 14.6745 1.11332 14.923L9.54833 18.881C9.68991 18.9502 9.84407 18.9817 9.99824 18.9817C10.1524 18.9817 10.3097 18.9471 10.4513 18.881L18.8894 14.923C19.4212 14.6745 19.6477 14.0421 19.396 13.5104C19.1474 12.9818 18.5119 12.7553 17.9865 13.0007Z" fill="#5A6E7C"/>
+                            </svg>
+                        </span>
+                        <span>Project</span>
+                    </a>
+                </nav>
+            </div>
+            <div class="user-profile" style="display: none;">
+                <div class="profile-img"></div>
+                <div class="profile-info">
+                    <div class="profile-name"></div>
+                    <div class="profile-role"></div>
+                </div>
+            </div>
+        </nav>
+        <main class="main-content" id="main">
+            <div class="top-bar">
+                        <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="#1A2340" xmlns="http://www.w3.org/2000/svg">
+                                <rect x="4" y="5" width="16" height="2" rx="1"/>
+                                <rect x="4" y="11" width="16" height="2" rx="1"/>
+                                <rect x="4" y="17" width="16" height="2" rx="1"/>
+                            </svg>
+                        </button>
+                        <span class="chat-title-text" id="currentChatTitle">Saved Reports</span>
+                    </div>
+            <div class="button-container">
+                <button class="btn new-report" id="downloadReportBtn">
+                   Download Report
+                </button>
+                <button class="btn new-report" id="newReportBtn">New Report</button>
+            </div>
+            <svg class="line" width="18" height="18" fill="none" stroke="white" stroke-width="2">
+                        <line x1="9" y1="4" x2="9" y2="14"/>
+                        <line x1="4" y1="9" x2="14" y2="9"/>
+                      </svg>
+            <header class="summary-header">
+                <section class="summary-cards">
+                    <article class="summary-card" id="risk-card">
+                        <div class="summary-card-header">
+                            <h2>Risk Score</h2>
+                            <span class="summary-score risk">56</span>
+                        </div>
+                        <div id="chart1" class="chart"></div>
+                        <div class="gauge-labels">
+                            <span class="low">Low</span>
+                            <span class="medium">Medium</span>
+                            <span class="high">High</span>
+                            <span class="critical">Critical</span>
+                        </div>
+                        <div class="summary-assets">On-prem Assets: 50</div>
+                    </article>
+                    <article class="summary-card" id="quality-card">
+                        <div class="summary-card-header">
+                            <h2>Quality Score</h2>
+                            <span class="summary-score quality">75</span>
+                        </div>
+                        <div id="chart2" class="chart"></div>
+                        <div class="gauge-labels">
+                            <span class="low">Low</span>
+                            <span class="medium">Medium</span>
+                            <span class="high">High</span>
+                            <span class="critical">Critical</span>
+                        </div>
+                        <div class="summary-assets">Cloud Assets: 50</div>
+                    </article>
+                    <article class="summary-card" id="actual-card">
+                        <div class="summary-card-header">
+                            <h2>Actual Score</h2>
+                            <span class="summary-score actual">80</span>
+                        </div>
+                        <div id="chart" class="chart1"></div>
+                        <div class="summary-date">06 July 2023 - 31 Jan 2025</div>
+                    </article>
+                </section>
+            </header>
+            <section class="dashboard-title">
+               <div class="dashboard-title-main">
+                 <svg class="dashboard-title-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                   <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                   <line x1="12" y1="9" x2="12" y2="13"></line>
+                   <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                 </svg>
+                 <h1>Automotive Sourcing Risk Analysis</h1>
+               </div>
+               <p>Visualizing critical sourcing decisions based on tariff changes and risk factors</p>
+            </section>
+            <section class="dashboard-row1">
+                <article class="chart-card1">
+                    <h3>Risk Timeline</h3>
+                    <div id="chart3" class="chart2"></div>
+                </article>
+                
+                <article class="chart-card1">
+                    <h3>Risk Distribution</h3>
+                    <div id="riskdistribution"></div>
+                </article>
+            </section>
+            <section class="dashboard-row">
+                <article class="chart-card">
+                    <h3>Supply Chain Risk Metrics</h3>
+                    <div id="riskChartContainer" class="riskchartcontainer"></div>
+                </article>
+            </section>
+            <section class="dashboard-row">
+                <article class="chart-card">
+                    <div class="chart-card-header">
+                        <h3>Strategic Decision Matrix Analysis</h3>
+                    </div>
+                    <div id="strategicScatterChart"></div>
+                    <div class="chart-desc"><h3>Key observations:</h3>
+                        <ul>
+                            <li>China (dark blue dot) demonstrates a high Risk Score (-58) and relatively low Qualitative Score (-58), positioning it in the least favorable quadrant of the matrix</li>
+                            <li>Two light blue dots (likely Vietnam and Poland based on subsequent data) exhibit favorable positioning with low Risk Scores (~30-40) and high Qualitative Scores (~75-78)</li>
+                            <li>Medium blue dots (likely Thailand, Mexico, and India) show moderate Risk Scores (~32-38) and good Qualitative Scores (~65-72)</li>
+                        </ul>
+                        This visualization effectively implements the "Risk Quantification" and "Qualitative evaluation of Alternatives" modules specified in the framework to Solve Prompt.
+                        <br>
+                        Bubble size represents landing cost. Color indicates recommendation (dark gray = reconsider, light gray = medium fit, cyan = high fit).
+                    </div>
+                </article>
+                <article class="chart-card">
+                    <h3>Risk vs. Quality Assessment</h3>
+                     <div id="radarChart" class="radarchart"></div>
+                    <div class="chart-desc">The radar chart visualization provides a multidimensional view of each country's risk and quality profiles. This directly operationalizes the Risk Scorecard (0-100) and Qualitative Scorecard (0-100) matrices described in the Prompt Guideline.
+                        <br><br>
+                        Analysis:
+                        <ul>
+                            <li>The light blue area represents Quality Score dimensions, showing stronger performance in Poland, Vietnam, and India compared to China</li>
+                            <li>The indigo area represents Risk Score dimensions, with China displaying a significantly larger risk footprint</li>
+                            <li>This visual reinforces that alternatives to China provide more balanced risk-quality profiles</li>
+                            <li>Lower risk scores (indigo) and higher quality scores (light blue) are better.</li>
+                        </ul>
+                    </div>
+                </article>
+            </section>
+            <section class="dashboard-row">
+                <article class="chart-card">
+                    <h3>Landing Cost Analysis</h3>
+                    <div id="landingChart"></div>
+                    <div class="chart-desc formula">The Landing Cost Analysis chart exemplifies the 'Cost Analysis (Baseline & New Tariff)' module from the Prompt Guideline. The visualization shows:
+                        <ul>
+                            <li>China has the highest total landing cost (~$64.10) with a substantial tariff impact (+$7.20)</li>
+                            <li>Vietnam offers the most competitive landing cost (~$56.85) with a slight tariff benefit (~$-0.05)</li>
+                            <li>Mexico demonstrates the most favorable tariff impact (~$-1.10)</li>
+                            <li>Poland shows a moderate landing cost (~$59.70) despite some tariff impact (+$2.80)</li>
+                        </ul>
+                        <span class="chart-desc formula-box">Landing Cost = Product Cost + Freight + Insurance + (Product Cost × Tariff Rate) + Inland Logistics + FX Adjustment</span>
+                        <br>
+                        Total landing costs shown with tariff impact overlay. Negative impact values represent savings.
+                    </div>
+                </article>
+                <article class="chart-card">
+                    <h3>Total Benefit Score vs China</h3>
+                    <div id="benefitChart"></div>
+                    <div class="chart-desc">The Total Benefit Score chart quantifies the advantages of alternative sourcing locations compared to China, using the weighted formula specified in the guideline.
+                        <br>
+                        <span class="chart-desc formula-box">Total Benefit Score = (△ Risk_Score × 0.6) - (△ Landing_Cost % × 0.4)</span>
+                        <br><br>
+                        Key highlights:
+                        <ul>
+                            <li>Poland achieves the highest total benefit score (15.4), with significant risk reduction (22.7) and meaningful cost savings (6.9%)</li>
+                            <li>Vietnam and Thailand show strong benefit scores around 15-19</li>
+                            <li>India displays the lowest benefit score but still represents a significant improvement over China</li>
+                        </ul>
+                    </div>
+                </article>
+            </section>
+            <section class="dashboard-row">
+                <article class="chart-card">
+                    <h3>Risk Factor Comparison: China vs Vietnam</h3>
+                   <div id="chartRadar"></div>
+                    <div class="chart-desc">The radar chart comparing China and Vietnam specifically highlights the six risk factors identified in the Risk Scorecard matrix from the guideline:
+                        <ul>
+                            <li>Tariff Volatility (weighted 20%)</li>
+                            <li>Concentration Risk (weighted 15%)</li>
+                            <li>Political Risk (weighted 20%)</li>
+                            <li>Non-Tariff Barriers (weighted 10%)</li>
+                            <li>Currency Risk (weighted 15%)</li>
+                            <li>Lead Time (weighted 20%)</li>
+                        </ul>
+                        <span class="chart-desc-small">Detailed risk factor breakdown showing weighted scores for each component.</span>
+                    </div>
+                </article>
+                <article class="chart-card">
+                    <h3>Qualitative Metrics Comparison</h3>
+                    <div id="metricchart"></div>
+                    <div class="chart-desc">This bar chart visualization implements the Qualitative Scorecard from the guideline, showing three key dimensions:
+                        <ul>
+                            <li>Competitiveness (analogous to Country Competitiveness, 15% weight in guideline)</li>
+                            <li>Logistics Performance (directly from guideline, 15% weight)</li>
+                            <li>ESG (corresponding to ESG Compliance, 10% weight in guideline)</li>
+                            <li>Strategic Fit (directly from guideline, 15% weight)</li>
+                        </ul>
+                        <span class="chart-desc-small">Comparison of qualitative factors across alternative sourcing countries.</span>
+                    </div>
+                </article>
+            </section>
+            <section class="recommendation-section">
+                <h3>Recommendation Summary</h3>
+                <div class="table-wrapper" id="recommendation-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>COUNTRY</th>
+                                <th>LANDING COST</th>
+                                <th>TARIFF IMPACT</th>
+                                <th>RISK SCORE</th>
+                                <th>QUALITY SCORE</th>
+                                <th>STRATEGIC FIT</th>
+                                <th>RECOMMENDATION</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>China</td>
+                                <td>$64.10</td>
+                                <td>+7.20</td>
+                                <td>56.4</td>
+                                <td>58.0</td>
+                                <td>Medium</td>
+                                <td><span class="recommendation-box recommendation-reconsider">Reconsider</span></td>
+                            </tr>
+                            <tr>
+                                <td>Vietnam</td>
+                                <td>$56.85</td>
+                                <td>-0.05</td>
+                                <td>30.7</td>
+                                <td>74.8</td>
+                                <td>High</td>
+                                <td><span class="recommendation-box recommendation-consider-switching">Consider switching</span></td>
+                            </tr>
+                            <tr>
+                                <td>Thailand</td>
+                                <td>$56.43</td>
+                                <td>0.47</td>
+                                <td>32.6</td>
+                                <td>72.0</td>
+                                <td>Medium</td>
+                                <td><span class="recommendation-box recommendation-consider-switching">Consider switching</span></td>
+                            </tr>
+                            <tr>
+                                <td>Mexico</td>
+                                <td>$55.80</td>
+                                <td>-1.10</td>
+                                <td>35.2</td>
+                                <td>68.6</td>
+                                <td>Medium</td>
+                                <td><span class="recommendation-box recommendation-consider-switching">Consider switching</span></td>
+                            </tr>
+                            <tr>
+                                <td>Poland</td>
+                                <td>$59.70</td>
+                                <td>+2.80</td>
+                                <td>33.8</td>
+                                <td>70.7</td>
+                                <td>Medium</td>
+                                <td><span class="recommendation-box recommendation-consider-switching">Consider switching</span></td>
+                            </tr>
+                            <tr>
+                                <td>India</td>
+                                <td>$56.57</td>
+                                <td>-0.33</td>
+                                <td>38.8</td>
+                                <td>76.9</td>
+                                <td>High</td>
+                                <td><span class="recommendation-box recommendation-consider-switching">Consider switching</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="table-desc">Based on the analysis: The 25% US-China tariff Increases landing costs by $7.20 per unit. Vietnam offers the best alternative with a 6% cost reduction, 26-point risk improvement, and high strategic fit. Mexico provides the most tariff savings but has higher risk factors than Vietnam or Thailand.</div>
+            </section>
+            <section class="executive-summary-section">
+                <h3>Executive Summary</h3>
+                <div class="executive-summary" id="executive-summary">
+                    <h4>Key Insights:</h4>
+                    <ul>
+                        <li>China's high concentration risk (90% of sourcing) and tariff impact ($7.20/unit) create significant exposure</li>
+                        <li>Vietnam emerges as the optimal alternative with 46% lower risk scores, lower landed costs, and high strategic fit</li>
+                        <li>A phased transition strategy reducing China dependency to 50% would yield approximately 28% risk reduction and 5% cost savings</li>
+                        <li>Thailand and Mexico provide strong alternatives for a diversified multi-sourcing approach</li>
+                        <li>ESG and strategic fit scores favor India for long-term strategic partnership development</li>
+                    </ul>
+                    <h4>Recommendation:</h4>
+                    <p>Implement a phased transition beginning with 30% volume shift to Vietnam, followed by secondary sourcing development in Thailand and Mexico. Maintain strategic supplier development in India for long-term resilience.</p>
+                    <h4>Next Steps:</h4>
+                    <ul>
+                        <li>Conduct detailed RFQ process with alternative suppliers in low-tariff regions</li>
+                        <li>Perform qualification testing for critical components from new suppliers</li>
+                        <li>Gradually transition high-risk components to dual-sourcing model</li>
+                        <li>Implement monthly landed cost and risk score tracking system</li>
+                        <li>Develop contingency plans for potential trade disruptions in high-risk regions</li>
+                    </ul>
+                    <h4>Conclusion:</h4>
+                    <p>The comprehensive analysis demonstrates that a strategic shift away from China-centric sourcing represents a significant opportunity to reduce costs, mitigate risks, and enhance overall supply chain resilience in the automotive industry. The data clearly supports a diversified approach with emphasis on Vietnam and Poland as primary alternatives, supplemented by strategic positions in Mexico and Thailand. By following the recommended implementation approach, these benefits can be realized while minimizing transition disruptions.</p>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script src="data1.js"></script>
+    <script src="charts1.js"></script>
+    <script src="chart.js"></script>
+    <script src="script1.js"></script>
+    <!-- Load html2pdf.js -->
+<!-- Required libraries -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      if (window.DashboardGraphs && window.DashboardGraphs.initializeCharts) {
+        window.DashboardGraphs.initializeCharts();
+      }
+    });
+
+    // Add navigation event handlers
+    document.addEventListener('DOMContentLoaded', function() {
+        // Action Twin navigation
+        const actionTwinNav = document.getElementById('actionTwinNav');
+        if (actionTwinNav) {
+            actionTwinNav.addEventListener('click', function(e) {
+                e.preventDefault();
+                window.location.href = 'main.html';
+                // The loadActionTwinPage function will be called when main.html loads
+            });
+        }
+
+        // Talk with Analyst navigation
+        const talkAnalystNav = document.getElementById('talkAnalystNav');
+        if (talkAnalystNav) {
+            talkAnalystNav.addEventListener('click', function(e) {
+                e.preventDefault();
+                window.location.href = 'main.html';
+                // The talkAnalystModal will be shown when main.html loads
+            });
+        }
+
+        // Project navigation
+        const projectNav = document.getElementById('projectNav');
+        if (projectNav) {
+            projectNav.addEventListener('click', function(e) {
+                e.preventDefault();
+                window.location.href = 'main.html';
+                // The loadProject function will be called when main.html loads
+            });
+        }
+
+        // Saved Reports navigation is already active on this page
+        const savedReportsNav = document.getElementById('savedReportsNav');
+        if (savedReportsNav) {
+            savedReportsNav.addEventListener('click', function(e) {
+                e.preventDefault();
+                // Already on the reports page
+            });
+        }
+    });
+
+    // Update sidebar toggle functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.querySelector('.main-content');
+        const fullLogo = document.querySelector('.full-logo');
+        const closedLogo = document.querySelector('.closed-logo');
+        const navItems = document.querySelectorAll('.nav-item');
+
+        if (sidebarToggle && sidebar && mainContent) {
+            sidebarToggle.addEventListener('click', function() {
+                // Toggle sidebar classes without affecting menu icon appearance
+                sidebar.classList.toggle('closed');
+                mainContent.classList.toggle('sidebar-closed');
+                
+                // Handle logo visibility
+                if (sidebar.classList.contains('closed')) {
+                    if (fullLogo) fullLogo.style.display = 'none';
+                    if (closedLogo) closedLogo.style.display = 'block';
+                } else {
+                    if (fullLogo) fullLogo.style.display = 'block';
+                    if (closedLogo) closedLogo.style.display = 'none';
+                }
+
+                // Toggle nav items text
+                navItems.forEach(item => {
+                    const textSpan = item.querySelector('span:last-child');
+                    if (textSpan) {
+                        textSpan.style.display = sidebar.classList.contains('closed') ? 'none' : 'inline';
+                    }
+                });
+
+                // Update sidebar width and main content margin
+                if (sidebar.classList.contains('closed')) {
+                    sidebar.style.width = '70px';
+                    mainContent.style.marginLeft = '70px';
+                    mainContent.style.width = 'calc(100% - 70px)';
+                } else {
+                    sidebar.style.width = '270px';
+                    mainContent.style.marginLeft = '270px';
+                    mainContent.style.width = 'calc(100% - 270px)';
+                }
+
+                // Update user profile
+                const userProfile = document.querySelector('.user-profile');
+                if (userProfile) {
+                    if (sidebar.classList.contains('closed')) {
+                        userProfile.style.width = '70px';
+                        userProfile.style.padding = '16px 13px';
+                        userProfile.style.justifyContent = 'center';
+                        const profileInfo = userProfile.querySelector('.profile-info');
+                        if (profileInfo) profileInfo.style.display = 'none';
+                        const profileImg = userProfile.querySelector('.profile-img');
+                        if (profileImg) {
+                            profileImg.style.width = '36px';
+                            profileImg.style.height = '36px';
+                            profileImg.style.fontSize = '14px';
+                        }
+                    } else {
+                        userProfile.style.width = '270px';
+                        userProfile.style.padding = '16px 32px';
+                        userProfile.style.justifyContent = 'flex-start';
+                        const profileInfo = userProfile.querySelector('.profile-info');
+                        if (profileInfo) profileInfo.style.display = 'flex';
+                        const profileImg = userProfile.querySelector('.profile-img');
+                        if (profileImg) {
+                            profileImg.style.width = '44px';
+                            profileImg.style.height = '44px';
+                            profileImg.style.fontSize = '18px';
+                        }
+                    }
+                }
+            });
+        }
+    });
+
+    // Add download report functionality
+    document.addEventListener('DOMContentLoaded', () => {
+  const downloadButton = document.getElementById('downloadReportBtn');
+  if (!downloadButton) return;
+
+  downloadButton.addEventListener('click', async () => {
+    const originalText = downloadButton.textContent;
+    downloadButton.textContent = 'Generating PDF...';
+    downloadButton.disabled = true;
+
+    try {
+      const element = document.querySelector('.main-content');
+      if (!element) throw new Error('Main content not found');
+
+      // Scroll to top and wait
+      window.scrollTo(0, 0);
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      const canvas = await html2canvas(element, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff',
+        width: element.scrollWidth,
+        height: element.scrollHeight,
+        windowWidth: element.scrollWidth,
+        windowHeight: element.scrollHeight
+      });
+
+      const imageData = canvas.toDataURL('image/jpeg', 1.0);
+
+      const imgWidthPx = canvas.width;
+      const imgHeightPx = canvas.height;
+
+      // Convert pixels to mm for PDF
+      const pxPerMm = 3.779528; // 1 mm ≈ 3.78 px
+      const pdfWidth = imgWidthPx / pxPerMm;
+      const pdfHeight = imgHeightPx / pxPerMm;
+
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF('p', 'mm', [pdfWidth, pdfHeight]);
+
+      pdf.addImage(imageData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+      pdf.save('MetaBrain_Full_Report.pdf');
+
+    } catch (err) {
+      console.error('Error generating PDF:', err);
+      downloadButton.textContent = 'Download Failed';
+      setTimeout(() => {
+        downloadButton.textContent = originalText;
+        downloadButton.disabled = false;
+      }, 3000);
+      return;
+    }
+
+    downloadButton.textContent = originalText;
+    downloadButton.disabled = false;
+  });
+});
+
+    // Add event listener for New Report button
+    document.getElementById('newReportBtn').addEventListener('click', () => {
+        // Redirect to main.html for a new chat
+        window.location.href = 'main.html';
+    });
+    </script>
+    <style>
+        /* Update sidebar styles */
+        .sidebar {
+            width: 270px;
+            background: linear-gradient(135deg, #F8FAFF 0%, #EAF3FF 100%);
+            box-shadow: 2px 0 16px 0 rgba(0, 102, 179, 0.04);
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            transition: width 0.3s ease;
+            overflow: hidden;
+        }
+
+        .sidebar.closed {
+            width: 70px !important;
+        }
+
+        .sidebar.closed .logo,
+        .sidebar.closed .full-logo,
+        .sidebar.closed .closed-logo,
+        .sidebar.closed .logo-img {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+        }
+
+        .sidebar.closed .nav-item {
+            padding: 12px 23px;
+            justify-content: center;
+        }
+
+        .sidebar.closed .nav-item span:last-child {
+            display: none;
+        }
+
+        .sidebar.closed .user-profile {
+            width: 70px;
+            padding: 16px 13px;
+            justify-content: center;
+        }
+
+        .sidebar.closed .profile-info {
+            display: none;
+        }
+
+        .sidebar.closed .profile-img {
+            width: 36px;
+            height: 36px;
+            font-size: 14px;
+        }
+
+        .main-content {
+            margin-left: 270px;
+            width: calc(100% - 270px);
+            transition: margin-left 0.3s ease, width 0.3s ease;
+        }
+
+        .main-content.sidebar-closed {
+            margin-left: 70px !important;
+            width: calc(100% - 70px) !important;
+        }
+
+        .sidebar-toggle {
+            background: #fff;
+            border: 1.2px solid #d1d5db;
+            border-radius: 9px;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            margin-right: 16px;
+            position: relative;
+            z-index: 1100;
+            box-shadow: 0 2px 8px 0 rgba(0,0,0,0.04);
+            transition: none; /* Remove transition to prevent style changes */
+        }
+
+        .sidebar-toggle svg {
+            width: 24px;
+            height: 24px;
+            transition: none; /* Remove transition to prevent style changes */
+        }
+
+        .sidebar-toggle svg rect {
+            fill: #1A2340;
+            transition: none; /* Remove transition to prevent style changes */
+        }
+
+        /* Keep the menu icon appearance consistent */
+        .sidebar-toggle svg rect:nth-child(1) {
+            x: 4;
+            y: 5;
+            width: 16;
+            height: 2;
+            rx: 1;
+        }
+
+        .sidebar-toggle svg rect:nth-child(2) {
+            x: 4;
+            y: 11;
+            width: 16;
+            height: 2;
+            rx: 1;
+        }
+
+        .sidebar-toggle svg rect:nth-child(3) {
+            x: 4;
+            y: 17;
+            width: 16;
+            height: 2;
+            rx: 1;
+        }
+
+        /* Remove any style changes on open state */
+        .sidebar-toggle.open svg rect:nth-child(1),
+        .sidebar-toggle.open svg rect:nth-child(2),
+        .sidebar-toggle.open svg rect:nth-child(3) {
+            transform: none;
+            opacity: 1;
+        }
+
+        /* Keep hover and active states subtle */
+        .sidebar-toggle:hover {
+            background: #f8fafc;
+        }
+
+        .sidebar-toggle:active {
+            background: #f1f5f9;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 32px;
+            background: white;
+            border-top: 1px solid #EAF3FF;
+            height: 76px;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 270px;
+            z-index: 3;
+            box-shadow: 0 -4px 12px rgba(0, 102, 179, 0.03);
+            transition: all 0.3s ease;
+        }
+
+        .profile-img {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0096D6 0%, #0066B3 100%);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 18px;
+            box-shadow: 0 2px 8px rgba(0, 102, 179, 0.15);
+            transition: all 0.3s ease;
+        }
+
+        .profile-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .profile-name {
+            font-weight: 600;
+            color: #1A2340;
+            font-size: 15px;
+            line-height: 1.3;
+        }
+
+        .profile-role {
+            font-size: 13px;
+            color: #7A8CA6;
+            line-height: 1.2;
+        }
+
+        /* Update logo styles */
+        .logo {
+            padding: 32px 0 24px 32px;
+            height: 94px;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo a {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        .logo-img {
+            height: 38px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .full-logo {
+            display: block;
+        }
+
+        .closed-logo {
+            display: none;
+        }
+
+        /* Update sidebar closed state logo styles */
+        .sidebar.closed .logo {
+            padding: 32px 0 24px 16px;
+            justify-content: center;
+        }
+
+        .sidebar.closed .full-logo {
+            display: none;
+        }
+
+        .sidebar.closed .closed-logo {
+            display: block;
+        }
+
+        /* Precise chart container and graph styles */
+        .summary-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--card-radius);
+            box-shadow: var(--card-shadow);
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            height: 100%;
+            position: relative;
+        }
+
+        .summary-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            padding: 0;
+        }
+
+        .summary-card h2 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--gray-700);
+            margin: 0;
+        }
+
+        .summary-score {
+            font-size: 1.75rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        /* Chart container specific styles */
+        .summary-card .chart {
+            width: 100%;
+            height: 90px;
+            min-height: 90px;
+            max-height: 90px;
+            margin: 0;
+            padding: 0;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        /* Ensure the chart canvas fits perfectly */
+        .summary-card .chart canvas {
+            width: 100% !important;
+            height: 100% !important;
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        /* Gauge labels positioning */
+        .gauge-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            margin-top: 0.5rem;
+            padding: 0;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+        }
+
+        .gauge-labels span {
+            flex: 1;
+            text-align: center;
+        }
+
+        /* Summary assets positioning */
+        .summary-assets {
+            font-size: 0.85rem;
+            color: var(--gray-500);
+            margin-top: 1.5rem;
+            text-align: left;
+            padding: 0;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .summary-card .chart {
+                height: 80px;
+                min-height: 80px;
+                max-height: 80px;
+            }
+        }
+
+        /* Ensure proper spacing in the card */
+        #risk-card .chart,
+        #quality-card .chart {
+            margin: 0.5rem 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Adjust the chart container to prevent overflow */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Add styles for download button states */
+        .download-report {
+            transition: all 0.3s ease;
+        }
+
+        .download-report:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            background-color: var(--gray-300);
+        }
+
+        /* Ensure charts are properly rendered in PDF */
+        @media print {
+            .chart canvas {
+                max-width: 100% !important;
+                height: auto !important;
+            }
+            
+            .summary-card {
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+            
+            .chart-card {
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+        }
+
+        /* Add styles for PDF generation */
+        @media print {
+            .main-content {
+                background: white !important;
+                color: black !important;
+                padding: 20px !important;
+            }
+            
+            .report-card,
+            .chart-container,
+            .summary-card {
+                break-inside: avoid;
+                page-break-inside: avoid;
+                margin-bottom: 20px;
+                background: white !important;
+                border: 1px solid #E2E8F0 !important;
+                border-radius: 8px !important;
+                box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1) !important;
+            }
+            
+            /* Ensure all text and colors are preserved */
+            * {
+                color-adjust: exact !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            /* Preserve text styles */
+            .text-lg {
+                font-size: 1.125rem !important;
+                color: #1A2340 !important;
+            }
+            .text-sm {
+                font-size: 0.875rem !important;
+                color: #4B5563 !important;
+            }
+            .font-semibold {
+                font-weight: 600 !important;
+            }
+
+            /* Hide elements that shouldn't be in PDF */
+            .button-container,
+            .sidebar-toggle {
+                display: none !important;
+            }
+
+            /* Preserve card styles */
+            .report-card-header {
+                padding: 16px !important;
+                border-bottom: 1px solid #E2E8F0 !important;
+            }
+
+            .report-card-body {
+                padding: 16px !important;
+            }
+
+            .report-card-footer {
+                padding: 16px !important;
+                border-top: 1px solid #E2E8F0 !important;
+                display: flex !important;
+                justify-content: space-between !important;
+                align-items: center !important;
+            }
+
+            /* Preserve status badge styles */
+            .status-badge {
+                padding: 4px 8px !important;
+                border-radius: 9999px !important;
+                font-size: 0.75rem !important;
+                font-weight: 500 !important;
+            }
+
+            .status-badge.completed {
+                background-color: #DEF7EC !important;
+                color: #03543F !important;
+            }
+
+            .status-badge.in-progress {
+                background-color: #FEF3C7 !important;
+                color: #92400E !important;
+            }
+
+            .status-badge.pending {
+                background-color: #E5E7EB !important;
+                color: #374151 !important;
+            }
+        }
+    </style>
+      <!-- Add this just before </body> -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+
+</body>
+</html> 

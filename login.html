@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MetaBrain Login</title>
+    <link rel="stylesheet" href="login.css">
+    <!--clerk js sdk script-->
+    <script src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js"></script>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="top-nav">
+        <div class="nav-logo">
+            <img src="images/logo.png" alt="MetaBrain Logo">
+        </div>
+        <div class="nav-welcome">
+            <span>Welcome</span>
+        </div>
+    </nav>
+
+    <!-- New content based on the image -->
+    <section class="upgrade-experience-section">
+        <div class="container">
+            <h1>Upgrade Your Experience</h1>
+            <p>Get full access to all features and take your experience to the next level.</p>
+        </div>
+    </section>
+
+    <section class="ready-to-get-started-section">
+        <div class="container">
+            <div class="ready-content">
+                <h2>Ready to get started?</h2>
+                <h2 class="talk-to-team">Talk to our team today.</h2>
+                <p>Our team of experts is ready to help you choose the perfect plan for your needs. Get personalized guidance and discover how we can help transform your business.</p>
+                <button class="btn contact-sales-btn">Contact Sales Team</button>
+            </div>
+            <div class="action-twin-preview">
+                <img src="images1/home.png" alt="Metabrain Application Preview" class="navbar-image">
+                <div class="navbar-overlay"></div>
+                <img src="images1/home1.png" alt="Metabrain Overlay Image" class="navbar-image1">
+            </div>
+        </div>
+    </section>
+
+    <!-- New section for the three boxes -->
+    <section class="feature-boxes-section">
+        <div class="container">
+            <div class="feature-box">
+                <div class="icon-and-heading">
+                    <svg class="pricing-icons" xmlns="http://www.w3.org/2000/svg" width="44" height="48" viewBox="0 0 24 24" fill="none" stroke="#4285F4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                    </svg>
+                    
+                    <h3>Enterprise Features</h3>
+                </div>
+                <p>Advanced tools and features designed for enterprise-level operations</p>
+            </div>
+            <div class="feature-box">
+                <div class="icon-and-heading">
+                    <svg class="pricing-icons" xmlns="http://www.w3.org/2000/svg" width="36" height="43" viewBox="0 0 24 24" fill="none" stroke="#4285F4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="16 18 22 12 16 6"/>
+                        <polyline points="8 6 2 12 8 18"/>
+                    </svg>
+                    
+                    <h3>Custom Solutions</h3>
+                </div>
+                <p>Tailored solutions to meet your specific business requirements</p>
+            </div>
+            <div class="feature-box">
+                <div class="icon-and-heading">
+                    <svg  class="pricing-icons" xmlns="http://www.w3.org/2000/svg" width="52" height="57" viewBox="0 0 24 24" fill="none" stroke="#4285F4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/>
+                        <circle cx="12" cy="12" r="4"/>
+                        <line x1="4.93" y1="4.93" x2="9.17" y2="9.17"/>
+                        <line x1="14.83" y1="14.83" x2="19.07" y2="19.07"/>
+                        <line x1="14.83" y1="9.17" x2="19.07" y2="4.93"/>
+                        <line x1="4.93" y1="19.07" x2="9.17" y2="14.83"/>
+                    </svg>
+                    
+                    <h3>Priority Support</h3>
+                </div>
+                <p>24/7 dedicated support team to assist you with any questions</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Existing login content - initially hidden -->
+    <div id="clerk-widget-container"></div> <!-- Clerk will mount here -->
+    <div class="login-container" id="loginContent">
+        <!-- Left Section -->
+        <div class="login-form-section">
+            <div class="logo-container">
+                <img src="images/logo.png" alt="MetaBrain - The F5 SAP Co-Innovation" class="logo">
+            </div>
+            
+            <div class="login-form">
+                <h2>Sign In</h2>
+                <p class="subtitle">Your gateway to smarter decisions. Log in to access insights that matter.</p>
+                
+                <form id="loginForm" onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <lable type="email" class="lable">Email</lable>
+                        <input type="email" id="email" placeholder="Email" required>
+                    </div>
+                    
+                    <div class="form-group password-group">
+                        <lable type="Password" class="lable">Password</lable>
+                        <input type="password" id="password" placeholder="Password" required>
+                        <button type="button" class="toggle-password">
+                            <img src="images/eye-icon.png" alt="Show/Hide Password">
+                        </button>
+                    </div>
+                    
+                    <div class="form-options">
+                        <label class="remember-me">
+                            <input type="checkbox" id="remember">
+                            <span>Remember me</span>
+                        </label>
+                        <a href="forgot-password.html" class="forgot-password">Forgot Password?</a>
+                    </div>
+                    
+                    <button type="submit" class="sign-in-btn">Sign in</button>
+                </form>
+                
+
+                
+                <p class="signup-prompt">
+                    Not a member yet? <a href="signup.html" class="sign-up-link">Sign Up</a>
+                </p>
+            </div>
+        </div>
+
+        <!-- Right Section -->
+        <div class="welcome-section">
+            <div class="welcome-content">
+                <h1>Welcome to Metabrain</h1>
+                <p>Access powerful insights, track your sustainability goals, and take actionable steps toward a greener future.</p>
+                
+
+                <img src="images1/home.png" alt="Metabrain Application Preview" class="app-preview-image">
+                <div class="black-overlay"></div>
+                <img src="images1/home1.png" alt="Metabrain Overlay Image" class="app-overlay-image">
+               
+            </div>
+            
+            <div class="copyright">
+                Copyright ©2025 Metafrost.ai All Rights Reserved
+            </div>
+        </div>
+    </div>
+
+    
+
+
+    <script type="module">
+        import { getUserByEmail } from './userApi.js';
+
+        // Store user credentials in localStorage after successful signup
+        function storeUserCredentials(email, password) {
+            const credentials = {
+                email: email,
+                password: password
+            };
+            localStorage.setItem('userCredentials', JSON.stringify(credentials));
+        }
+
+        // Get stored user credentials
+        function getStoredCredentials() {
+            const credentials = localStorage.getItem('userCredentials');
+            return credentials ? JSON.parse(credentials) : null;
+        }
+
+        window.handleLogin = async function(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
+            let errorMsg = document.getElementById('loginErrorMsg');
+            
+            if (!errorMsg) {
+                errorMsg = document.createElement('div');
+                errorMsg.id = 'loginErrorMsg';
+                errorMsg.style.color = '#d32f2f';
+                errorMsg.style.margin = '12px 0 0 0';
+                errorMsg.style.fontWeight = '600';
+                document.getElementById('loginForm').appendChild(errorMsg);
+            }
+
+            if (!email || !password) {
+                errorMsg.textContent = 'Please enter both email and password.';
+                return;
+            }
+
+            try {
+                console.log('Attempting login with email:', email);
+                
+                // Get stored credentials
+                const storedCredentials = getStoredCredentials();
+                
+                // Check if credentials match
+                if (!storedCredentials || 
+                    storedCredentials.email !== email || 
+                    storedCredentials.password !== password) {
+                    errorMsg.textContent = 'Invalid email or password.';
+                    return;
+                }
+
+                // Get user by email
+                const response = await getUserByEmail(email);
+                console.log('Login response:', response);
+                
+                if (response && response.email === email) {
+                    // Store user data in session storage
+                    const userData = {
+                        id: response.id,
+                        email: response.email,
+                        name: response.name || email.split('@')[0],
+                        org_id: response.org_id || 'default_org',
+                        role: response.role || 'user'
+                    };
+                    
+                    console.log('Storing user data:', userData);
+                    sessionStorage.setItem('user', JSON.stringify(userData));
+                    
+                    // If remember me is checked, store in localStorage
+                    if (document.getElementById('remember').checked) {
+                        localStorage.setItem('user', JSON.stringify(userData));
+                    }
+                    
+                    // Redirect to main page
+                    window.location.href = './main.html';
+                } else {
+                    console.log('Invalid response format:', response);
+                    errorMsg.textContent = 'Invalid email or password.';
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                
+                // Handle different types of errors
+                if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
+                    errorMsg.textContent = 'Unable to connect to the server. Please try again later.';
+                } else if (error.response) {
+                    // Handle API error responses
+                    switch (error.response.status) {
+                        case 404:
+                            errorMsg.textContent = 'User not found. Please check your email.';
+                            break;
+                        case 401:
+                            errorMsg.textContent = 'Invalid email or password.';
+                            break;
+                        default:
+                            errorMsg.textContent = 'An error occurred. Please try again.';
+                    }
+                } else {
+                    errorMsg.textContent = 'Invalid email or password.';
+                }
+            }
+        };
+
+        // Toggle password visibility
+        document.querySelector('.toggle-password').addEventListener('click', function() {
+            const passwordInput = document.getElementById('password');
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+        });
+
+        // Check for stored credentials
+        window.addEventListener('load', function() {
+            const storedUser = localStorage.getItem('user');
+            if (storedUser) {
+                try {
+                    const user = JSON.parse(storedUser);
+                    if (user && user.email) {
+                        document.getElementById('email').value = user.email;
+                        document.getElementById('remember').checked = true;
+                    }
+                } catch (e) {
+                    console.error('Error parsing stored user data:', e);
+                    localStorage.removeItem('user');
+                }
+            }
+        });
+
+        // Add event listener for the Contact Sales Team button in the initial sections
+        document.querySelector('.contact-sales-btn').addEventListener('click', function() {
+            // Hide the login content (in case it was somehow visible - keep this line)
+            document.getElementById('loginContent').style.display = 'none';
+
+            // Show the Contact Sales modal
+            document.getElementById('contactSalesModal').style.display = 'flex'; // Use flex for centering
+
+            // Do NOT hide the initial sections or the navigation bar when showing the modal
+            // document.querySelector('.upgrade-experience-section').style.display = 'none'; // REMOVED
+            // document.querySelector('.ready-to-get-started-section').style.display = 'none'; // REMOVED
+            // document.querySelector('.feature-boxes-section').style.display = 'none'; // REMOVED
+            // document.querySelector('.top-nav').style.display = 'none'; // REMOVED as nav remains visible
+            // document.body.style.paddingTop = '0'; // REMOVED as nav remains visible
+        });
+
+        // Add event listeners for the modal buttons (Cancel and Contact Sales)
+        document.querySelector('#contactSalesModal .btn-cancel').addEventListener('click', function() {
+            // Hide the modal
+            document.getElementById('contactSalesModal').style.display = 'none';
+
+            // No need to show initial sections again here, as they were never hidden
+            // The navbar also remains visible as it was never hidden
+        });
+
+        document.querySelector('#contactSalesModal .btn-contact-sales').addEventListener('click', function() {
+            // Handle the Contact Sales form submission here
+            // For now, just log a message and hide the modal
+            console.log('Contact Sales button clicked!');
+            document.getElementById('contactSalesModal').style.display = 'none';
+            // You would typically collect form data and send it to your backend here
+        });
+
+
+        //clerk code
+        document.addEventListener("DOMContentLoaded", async () => {
+    try {
+      await Clerk.load({
+        frontendApi: "pk_test_Y29zbWljLWNoaWNrZW4tNzMuY2xlcmsuYWNjb3VudHMuZGV2JA" // ✅ Wrap in quotes!
+      });
+
+      const clerk = Clerk._client;
+
+      // Log Clerk is ready
+      console.log("Clerk SDK loaded");
+
+      if (!clerk.user) {
+        console.log("No user logged in");
+
+        // Mount Clerk widget
+        const signIn = new Clerk.SignIn({
+          container: "#clerk-widget-container",
+          appearance: {
+            elements: {
+              formButtonPrimary: "sign-in-btn", // style to match your custom button
+            }
+          }
+        });
+        signIn.mount();
+      } else {
+        const container = document.getElementById("clerk-widget-container");
+        container.innerHTML = `
+          <p>Welcome, ${clerk.user.firstName || clerk.user.email}</p>
+          <button id="signOutBtn">Sign Out</button>
+        `;
+        document.getElementById("signOutBtn").addEventListener("click", () => {
+          clerk.signOut();
+          window.location.reload();
+        });
+      }
+
+    } catch (error) {
+      console.error("❌ Clerk load error:", error);
+    }
+  });
+
+        // Add event listener for clicking the logo or welcome text in the navbar
+        const navLogo = document.querySelector('.nav-logo');
+        const navWelcome = document.querySelector('.nav-welcome');
+        const upgradeSection = document.querySelector('.upgrade-experience-section');
+        const readySection = document.querySelector('.ready-to-get-started-section');
+        const featuresSection = document.querySelector('.feature-boxes-section');
+        const loginContent = document.getElementById('loginContent');
+        const contactSalesModal = document.getElementById('contactSalesModal');
+        const topNav = document.querySelector('.top-nav');
+
+        function showLoginForm() {
+            // Hide the initial sections
+            if (upgradeSection) upgradeSection.style.display = 'none';
+            if (readySection) readySection.style.display = 'none';
+            if (featuresSection) featuresSection.style.display = 'none';
+
+            // Hide the modal if it's open
+            if (contactSalesModal) contactSalesModal.style.display = 'none';
+
+            // Hide the navigation bar
+            if (topNav) topNav.style.display = 'none';
+
+            // Show the login content
+            if (loginContent) loginContent.style.display = 'flex'; // Assuming it uses flex display
+
+             // Adjust body padding for when the nav is hidden for the login form
+             document.body.style.paddingTop = '0';
+        }
+
+        // Function to show the initial upgrade page content and navbar
+        function showUpgradePage() {
+             // Show the initial sections
+            if (upgradeSection) upgradeSection.style.display = 'block'; // Assuming block or similar display
+            if (readySection) readySection.style.display = 'flex'; // Assuming flex display
+            if (featuresSection) featuresSection.style.display = 'block'; // Assuming block or similar display
+
+            // Hide the login content
+            if (loginContent) loginContent.style.display = 'none';
+
+             // Hide the modal if it's open
+            if (contactSalesModal) contactSalesModal.style.display = 'none';
+
+            // Show the navigation bar
+            if (topNav) topNav.style.display = 'flex'; // Assuming flex display for navbar
+
+             // Adjust body padding to account for the fixed nav
+             // You might need to fine-tune this value based on the actual height of your top-nav
+            document.body.style.paddingTop = '61px'; // Example padding (nav height + border)
+        }
+
+
+        if (navLogo) {
+            navLogo.style.cursor = 'pointer'; // Indicate that it's clickable
+            navLogo.addEventListener('click', showLoginForm);
+        }
+
+        if (navWelcome) {
+            navWelcome.style.cursor = 'pointer'; // Indicate that it's clickable
+            navWelcome.addEventListener('click', showLoginForm);
+        }
+
+        // Call showUpgradePage on initial page load to ensure correct state
+        window.addEventListener('load', showUpgradePage);
+
+    </script>
+
+    <!-- Contact Sales Modal -->
+    <div id="contactSalesModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h2 class="modal-title">Contact Sales Team</h2>
+            <p class="modal-subtitle">Tell us about your business needs and our sales team will help you choose the perfect plan.</p>
+
+            <div class="form-group">
+                <textarea class="form-input" placeholder="Describe your requirements..."></textarea>
+            </div>
+
+            <div class="upload-box dashed-border">
+                <div class="upload-area">
+                    Drag & Drop or click to upload additional information
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button class="btn btn-cancel">Cancel</button>
+                <button class="btn btn-contact-sales">Contact Sales</button>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
