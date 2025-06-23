@@ -77,6 +77,7 @@
 
   <!-- Main Content -->
   <main class="main-content" id="mainContent">
+    
     <div class="top-bar">
       <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="#1A2340" xmlns="http://www.w3.org/2000/svg">
@@ -85,6 +86,14 @@
           <rect x="4" y="17" width="16" height="2" rx="1"/>
         </svg>
       </button>
+      
+      <a id="infoIconBtn" href="images/Report.docx" download style="display: flex; align-items: center; margin-left: 780px; cursor: pointer;">
+        <svg width="25" height="25" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="16" cy="16" r="14" stroke="#4285F4" stroke-width="2.5" fill="none"/>
+          <rect x="15" y="12" width="2" height="10" rx="1" fill="#4285F4"/>
+          <rect x="15" y="9" width="2" height="2" rx="1" fill="#4285F4"/>
+        </svg>
+      </a>
       <div class="toggle">
         <span class="toggle-text">Ideation Studio</span>
         <label class="toggle-switch">
@@ -848,117 +857,55 @@
       document.querySelector('.container').style.display = 'none';
       document.getElementById('savedReportsSection')?.remove();
       document.getElementById('actionTwinSection')?.remove();
+      document.getElementById('projectSection')?.remove();
       if (!document.getElementById('projectSection')) {
         const section = document.createElement('section');
         section.id = 'projectSection';
         section.innerHTML = `
-          <div class="project-page-container">
-            <div class="project-header-bar">
-              <h2>Projects - Created by you</h2>
-              <button class="create-new-project-btn">+ Create New Project</button>
-            </div>
-            <div class="project-table-container">
-              <table class="project-table">
-                <thead>
-                  <tr>
-                    <th>Project Name</th>
-                    <th>Description</th>
-                    <th>Invites</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <!-- Project rows will be rendered here by renderProjectsTable -->
-                </tbody>
-              </table>
+          <div style="display: flex; justify-content: center; align-items: center; min-height: 80vh; width: 100%; background: #f9fafb;">
+            <div style="width: 100%; max-width: 480px; display: flex; flex-direction: column; align-items: center;">
+              <span style="display: flex; align-items: center; justify-content: center; margin-bottom: 18px;">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z" fill="#3578e5"/>
+                  <path d="M20 3v4" stroke="#3578e5" stroke-width="2" stroke-linecap="round"/>
+                  <path d="M22 5h-4" stroke="#3578e5" stroke-width="2" stroke-linecap="round"/>
+                  <path d="M4 17v2" stroke="#3578e5" stroke-width="2" stroke-linecap="round"/>
+                  <path d="M5 18H3" stroke="#3578e5" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+              </span>
+              <h2 style="font-size: 2rem; font-weight: 700; color: #1A2340; margin-bottom: 8px; text-align: center;">Subscription Required</h2>
+              <div style="color: #5A6E7C; font-size: 1.08rem; margin-bottom: 28px; text-align: center; line-height: 1.5;">Only subscribed users can use this option.<br>Please subscribe to access this feature.</div>
+              <div style="background: #fff; border-radius: 14px; box-shadow: 0 2px 12px rgba(0,0,0,0.07); padding: 28px 28px 18px 28px; margin-bottom: 28px; width: 100%; max-width: 420px;">
+                <div style="font-size: 1.18rem; font-weight: 600; color: #1A2340; margin-bottom: 12px;">Why Subscribe?</div>
+                <ul style="color: #374151; font-size: 1rem; line-height: 1.7; padding-left: 20px; margin-bottom: 0;">
+                  <li>Access exclusive project features and tools.</li>
+                  <li>Collaborate with your team in real-time.</li>
+                  <li>Receive priority support and updates.</li>
+                  <li>Unlock advanced analytics and insights.</li>
+                </ul>
+              </div>
+              <button style="background: #3578e5; color: #fff; border: none; border-radius: 8px; padding: 14px 0; font-size: 1.13rem; font-weight: 700; width: 100%; max-width: 420px; margin-bottom: 10px; cursor: pointer; box-shadow: 0 1px 4px rgba(53,120,229,0.08);">Subscribe Now</button>
+              <a href="#" id="backToDashboardLink" style="color: #3578e5; font-size: 1rem; text-decoration: underline; margin-top: 2px;">Back to Dashboard</a>
             </div>
           </div>
         `;
         mainContent.appendChild(section);
-
-        // Add event listeners for the Add Project modal within loadProject
-        const addProjectModal = document.getElementById('addProjectModal');
-        const createNewProjectBtn = section.querySelector('.create-new-project-btn');
-        const cancelAddProjectBtn = document.getElementById('cancelAddProjectBtn');
-        const saveProjectBtn = document.getElementById('saveProjectBtn'); // Get the save button
-        const projectNameInput = addProjectModal.querySelector('input[placeholder="Project Name"]');
-        const projectDescriptionInput = addProjectModal.querySelector('input[placeholder="Description"]');
-        const inviteEmailsInput = addProjectModal.querySelector('#inviteEmails');
-
-        // Show the modal when the "Create New Project" button is clicked
-        if (createNewProjectBtn) {
-          createNewProjectBtn.addEventListener('click', () => {
-            if (addProjectModal) {
-              addProjectModal.style.display = 'flex';
-            }
-          });
+        // Add event listener for Back to Dashboard link in Project section
+        const backToDashboard = document.getElementById('backToDashboardLink');
+        if (backToDashboard) {
+          backToDashboard.onclick = function(e) {
+            e.preventDefault();
+            // Remove the Project section
+            document.getElementById('projectSection')?.remove();
+            // Activate the main chat/questions nav item if needed
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            // Optionally, activate a nav item for chat if you have one (else skip)
+            // document.getElementById('mainChatNav')?.classList.add('active');
+            // Show main chat/questions page
+            loadMainPage();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          };
         }
-
-        // Hide the modal when the "Cancel" button is clicked
-        if (cancelAddProjectBtn) {
-          cancelAddProjectBtn.addEventListener('click', () => {
-            if (addProjectModal) {
-              addProjectModal.style.display = 'none';
-              // Clear form fields when canceling
-              projectNameInput.value = '';
-              projectDescriptionInput.value = '';
-              inviteEmailsInput.value = '';
-            }
-          });
-        }
-
-        // Hide the modal when clicking outside the modal content
-        if (addProjectModal) {
-          addProjectModal.addEventListener('click', (e) => {
-            if (e.target === addProjectModal) {
-              addProjectModal.style.display = 'none';
-              // Clear form fields when clicking outside
-              projectNameInput.value = '';
-              projectDescriptionInput.value = '';
-              inviteEmailsInput.value = '';
-            }
-          });
-        }
-
-        // Handle Save button click
-        if (saveProjectBtn) {
-          saveProjectBtn.addEventListener('click', () => {
-            const projectName = projectNameInput.value.trim();
-            const projectDescription = projectDescriptionInput.value.trim();
-            const inviteEmails = inviteEmailsInput.value.trim();
-
-            if (!projectName) {
-              showNotification('Project Name is required.', 'error');
-              return;
-            }
-
-            const newProject = {
-              id: Date.now(),
-              name: projectName,
-              description: projectDescription,
-              invites: inviteEmails
-            };
-
-            // Get existing projects from local storage
-            const existingProjects = JSON.parse(localStorage.getItem('projects')) || [];
-
-            // Add new project and save back to local storage
-            existingProjects.push(newProject);
-            localStorage.setItem('projects', JSON.stringify(existingProjects));
-
-            // Clear form and hide modal
-            projectNameInput.value = '';
-            projectDescriptionInput.value = '';
-            inviteEmailsInput.value = '';
-            addProjectModal.style.display = 'none';
-
-            showNotification('Project created successfully!');
-            renderProjectsTable();
-          });
-        }
-
-        // Initial rendering of the table
-        renderProjectsTable();
       }
     }
 
@@ -2167,6 +2114,38 @@
             activeItem.classList.add('active');
         }
     });
+
+    // Add event listener for Back to Dashboard link in Project section
+    setTimeout(() => {
+      const backToDashboard = document.getElementById('backToDashboardLink');
+      if (backToDashboard) {
+        backToDashboard.onclick = function(e) {
+          e.preventDefault();
+          loadActionTwinPage();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+      }
+    }, 0);
+
+    // Add event listener for sidebar logo to navigate to chat page
+    setTimeout(() => {
+      const logoHomeBtn = document.getElementById('logoHomeBtn');
+      if (logoHomeBtn) {
+        logoHomeBtn.onclick = function(e) {
+          e.preventDefault();
+          // Remove special sections if present
+          document.getElementById('projectSection')?.remove();
+          document.getElementById('savedReportsSection')?.remove();
+          document.getElementById('actionTwinSection')?.remove();
+          // Activate main chat nav item if you have one (else skip)
+          // document.getElementById('mainChatNav')?.classList.add('active');
+          document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+          // Show main chat/questions page
+          loadMainPage();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+      }
+    }, 0);
   </script>
 </body>
 </html>
